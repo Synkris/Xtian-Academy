@@ -1,0 +1,9 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/Xtian-Academy/.vs/Xtian-Academy/v17
+/Xtian-Academy/Core/obj
+/Xtian-Academy/Logic/obj
+/Xtian-Academy/Xtian-Academy/bin/Debug/net6.0
+/Xtian-Academy/Xtian-Academy/obj
