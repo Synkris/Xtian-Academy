@@ -1,0 +1,44 @@
+﻿@{
+	ViewData["Title"] = "Login Page";
+}
+
+<!-- Login Form Start -->
+<div class="container">
+	<div class="row g-4 justify-content-center">
+		<div class="col-lg-6 col-md-8 col-sm-12 my-6 mb-0 wow fadeInUp" data-wow-delay="0.1s">
+			<div class="bg-dark  p-4" style="border-radius: 25px;">
+				<h1 class="mb-4 text-center text-primary">Login</h1>
+				<div class="row g-3">
+					<div class="col-sm-12 mb-0">
+						<p class="text-left mb-0 text-primary"><b>Email</b></p>
+					</div>
+					<div class="col-sm-12 mt-1">
+						<div class="form-floating">
+							<input type="email" class="form-control border-0" id="Email" placeholder="Enter your email">
+							<label for="cname">Enter your email</label>
+						</div>
+					</div>
+					<div class="col-sm-12 mb-0">
+						<p class="text-left mb-0 text-primary"><b>Password</b></p>
+					</div>
+					<div class="col-sm-12 mt-1">
+						<div class="form-floating">
+							<input type="password" class="form-control border-0" id="Passwrd" placeholder="Enter password">
+							<label for="cname">Enter password</label>
+						</div>
+					</div>
+					<div class="col-12 mt-4">
+						<button class="btn btn-primary w-100 py-2 text-center" style="border-radius: 15px;" onclick="loginPost()" type="submit">Login</button>
+					</div>
+					<div class="col-12">
+						<div class="form-floating text-center">
+							<p class="mb-2 text-center">Don't have an account yet? <a class="text-primary" asp-controller="Accounts" asp-action="Application"><b>Apply Now</b></a></p>
+							<a class="mb-4 text-muted" asp-controller="Accounts" asp-action="ForgotPassword"><b>Forgot password?</b></a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- Login Form End -->
