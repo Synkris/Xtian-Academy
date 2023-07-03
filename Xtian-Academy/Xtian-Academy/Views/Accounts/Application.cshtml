@@ -1,0 +1,201 @@
+﻿@model Core.ViewModels.ApplicationUserViewModel
+@{
+    ViewData["Title"] = "Application Page";
+}
+<div class="container-xxl courses mt-3 py-4 pb-0">
+	<div class="container-fluid pb-4">
+		<div class="container-fluid py-4">
+			<div class="row justify-content-center">
+				<div class="col-10">
+					<h1 class="mb-1 text-center fadeInUp">Application Form</h1>
+				</div>
+			</div>
+		</div>
+		<div class="row g-4 justify-content-center mb-6 wow fadeInUp applicationForm" data-wow-delay="0.1s">
+			<div class="col-md-2">
+				<div class="row justify-content-center">
+					<div class="col-md-12">
+						<h4 class="pt-0 tickcheck1" style="color: #4c5b64;"><i class="fa fa-check-circle" style="font-size: 25px;"></i>  Registration</h4>
+						<h5 class="px-2 pt-0 tickcheck1" style="color: #4c5b64;">|</h5>
+						<h5 class="px-2 pt-0 tickcheck1" style="color: #4c5b64;">|</h5>
+						<h5 class="px-2 pt-0 tickcheck1" style="color: #4c5b64;">|</h5>
+                    </div>
+                    <div class="col-md-12">
+						<h4 class="pt-0 tickcheck2" style="color: #4c5b64;"><i class="fa fa-check-circle" style="font-size: 25px;"></i>  Personal Info</h4>
+						<h5 class="px-2 pt-0 tickcheck2" style="color: #4c5b64;">|</h5>
+						<h5 class="px-2 pt-0 tickcheck2" style="color: #4c5b64;">|</h5>
+						<h5 class="px-2 pt-0 tickcheck2" style="color: #4c5b64;">|</h5>
+                    </div>
+                    <div class="col-md-12 text-muted">
+						<h4 class="pt-0 tickcheck3" style="color: #4c5b64;"><i class="fa fa-check-circle " style="font-size: 25px;"></i>  Skills</h4>
+                    </div>
+				</div>
+			</div>
+			<div class="col-md-10" id="form11">
+				<!-- FORM 1 -->
+				<div class="form-row">
+					<div class="col-md-12 mb-3">
+						<div class="row">
+							<div class="col-md-6 mb-3">
+								<label class="text-dark"><b>First Name</b><span class="text-danger">*</span></label>
+								<input type="text" class="form-control inputFormat" id="FirstName" placeholder="First Name" required>
+								<p class="text-danger" id="FNameValidation" style="display: none;"><b>Can't be empty</b></p>
+							</div>
+							<div class="col-md-6 mb-3">
+								<label class="text-dark"><b>Last Name</b><span class="text-danger">*</span></label>
+								<input type="text" class="form-control inputFormat" id="LastName" placeholder="Last Name" required>
+								<p class="text-danger" id="LNameValidation" style="display: none;"><b>Can't be empty</b></p>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6 mb-3">
+								<div class="form-row">
+									<div class="col-md-12 mb-3">
+										<label class="text-dark"><b>Username</b><span class="text-danger">*</span></label>
+										<input type="text" class="form-control inputFormat" id="UserName" placeholder="Username" aria-describedby="inputGroupPrepend3" required>
+										<p class="text-danger" id="UserNameValidation" style="display: none;"><b>Can't be empty</b></p>
+									</div>
+									<div class="col-md-12 mb-2">
+										<label class="text-dark"><b>Email</b><span class="text-danger">*</span></label>
+										<input type="email" class="form-control inputFormat" id="Email" placeholder="Email Address" required>
+										<p class="text-danger" id="EmailValidation" style="display: none;"><b>Can't be empty</b></p>
+									</div>
+									<div class="col-md-12 mb-2">
+										<label class="text-dark"><b>Password</b><span class="text-danger">*</span></label>
+										<input type="password" id="Passwrd" class="form-control inputFormat" placeholder="Enter Password" required>
+										<p class="text-danger" id="PasswordValidation" style="display: none;"><b>Can't be empty</b></p>
+									</div>
+									<div class="col-md-12 mb-3">
+										<label class="text-dark"><b>Confirm Password</b><span class="text-danger">*</span></label>
+										<input type="password" id="Cpasswrd" class="form-control inputFormat" placeholder="Enter Password Confirmation" required>
+										<p class="text-danger" id="ConfirmValidation" style="display: none;">Password and password confirmation not matched</p>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6 mb-3">
+								<div class="form-row">
+									<div class="col-md-12 mb-3">
+										<label class="text-dark"><b>Phone</b><span class="text-danger">*</span></label>
+										<input type="number" class="form-control inputFormat" id="PhoneNo" placeholder="Phone number" required>
+										<p class="text-danger" id="TelValidation" style="display: none;"><b>Can't be empty</b></p>
+									</div>
+									<div class="col-md-12 mb-3">
+										<label class="text-dark"><b>Address</b><span class="text-danger">*</span></label>
+										<textarea rows="8" class="form-control inputFormat" id="Address" placeholder="Enter Address"></textarea>
+										<p class="text-danger" id="AddressValidation" style="display: none;"><b>Can't be empty</b></p>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-12 mb-3">
+						<div class="row px-4" style="justify-content: flex-end;">
+							<button class="btn btn-primary py-2 text-center" style="border-radius: 15px; width:20%;" onclick="HideFormPage11Next()" type="submit"><b>Next</b></button>
+						</div>
+					</div>
+				</div>
+				<!--/ FORM 1 -->
+			</div>
+			<div class="col-md-10" id="form22" style="display: none;">
+				<!-- FORM 2 -->
+				<div class="form-row">
+					<div class="col-md-12 mb-4">
+						<div class="row">
+							<div class="col-md-6 mb-3">
+								<label class="text-dark"><b>Have you completed your NYSC?</b><span class="text-danger">*</span></label>
+								<select class="inputFormat" id="nysc" required asp-items="@(new SelectList(@ViewBag.YesOrNo,  "Id", "Name" ))"></select>
+								<p class="text-danger" id="NyscValidation" style="display: none;">Choose an Option</p>
+							</div>
+							<div class="col-md-6 mb-3">
+								<label class="text-dark"><b>Do you have a laptop?</b><span class="text-danger">*</span></label>
+								<select class="inputFormat" id="laptop" required asp-items="@(new SelectList(@ViewBag.YesOrNo,  "Id", "Name" ))"></select>
+								<p class="text-danger" id="LaptopValidation" style="display: none;">Choose an Option</p>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6 mb-3">
+								<label class="text-dark"><b>Have you programmed in any language before?</b><span class="text-danger">*</span></label>
+								<select class="inputFormat" onchange="EnableOrDisableInput()" id="programmingExp" required asp-items="@(new SelectList(@ViewBag.YesOrNo,  "Id", "Name" ))"></select>
+								<p class="text-danger" id="programmingExpValidation" style="display: none;">Choose an Option</p>
+							</div>
+							<div class="col-md-6 mb-3">
+								<label class="text-dark"><b>Are you currently in Enugu?</b><span class="text-danger">*</span></label>
+								<select class="inputFormat" id="stateOfResident" required asp-items="@(new SelectList(@ViewBag.YesOrNo,  "Id", "Name" ))"></select>
+								<p class="text-danger" id="StateOfResidentValidation" style="display: none;">Choose an Option</p>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6 mb-3">
+								<label class="text-dark"><b>If your answer above is YES, list the languages?</b><span class="text-danger">*</span></label>
+								<textarea rows="2" class="form-control inputFormat" placeholder="List all the languages" id="programmingExpList" required disabled></textarea>
+								<p class="text-danger" id="ProgrammingExpListValidation" style="display: none;">You choosed Yes, list the languages</p>
+							</div>
+							<div class="col-md-6 mb-3">
+								<label class="text-dark"><b>Why do you want to become a software developer?</b><span class="text-danger">*</span></label>
+								<textarea rows="2" class="form-control inputFormat" placeholder="Enter your reasons" id="reasons" required></textarea>
+								<p class="text-danger" id="ReasonValidation" style="display: none;">This <b>Can't be empty</b></p>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-12 mb-3">
+						<div class="row px-4" style="justify-content: flex-end;">
+							<button class="btn btn-primary py-2 text-center mx-3" style="border-radius: 15px; width:20%;" onclick="HideFormPage22Previous()" type="submit"><b>Previous</b></button>
+							<button class="btn btn-primary py-2 text-center" style="border-radius: 15px; width:20%;" onclick="HideFormPage22Next()" type="submit"><b>Next</b></button>
+						</div>
+					</div>
+				</div>
+				<!--/ FORM 2 -->
+			</div>
+			<div class="col-md-10" id="form33" style="display: none;">
+				<!-- FORM 3 -->
+				<div class="form-row">
+					<div class="col-md-12 mb-3">
+						<div class="row">
+							<div class="col-md-12 mb-3">
+								<label class="text-dark"><b>Tell Us about your skills ?</b><span class="text-danger">*</span></label>
+								<textarea rows="3" class="form-control inputFormat" id="skills" placeholder="Your skills" required></textarea>
+								<p class="text-danger" id="SkillsValidation" style="display: none;">Tell us about your skills</p>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12 mb-3">
+								<label class="text-dark"><b>Do you understand that you will not be paid for the first 3months of your training ? <br /> Please tell us how you intend to cope during this period</b><span class="text-danger">*</span></label>
+								<textarea rows="3" class="form-control inputFormat" id="survive" placeholder="Tell us you plan" required></textarea>
+								<p class="text-danger" id="SurviveValidation" style="display: none;">Tell us your plan</p>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12 mb-3">
+								<label class="text-dark"><b>Upload CV():</b><span class="text-danger">*</span></label>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12 mb-3">
+								<input class="form-control inputFormat" accept=".pdf" type="file" id="cv" required placeholder="Upload CV in PDF format only">
+								<p class="text-danger" id="CvValidation" style="display: none;">Upload CV in <b>PDF</b> format only</p>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-12 mb-3">
+						<div class="row px-4" style="justify-content: flex-end;">
+							<button class="btn btn-primary py-2 text-center mx-3" style="border-radius: 15px; width:20%;" onclick="HideFormPage33Previous()" type="submit"><b>Previous</b></button>
+							<button class="btn btn-primary py-2 text-center" style="border-radius: 15px; width:20%;" onclick="ApplicationRequest()" type="submit"><b>Submit</b></button>
+						</div>
+					</div>
+				</div>
+				<!--/ FORM 3 -->
+			</div>
+		</div>
+	</div>
+</div>
+<style>
+	.inputFormat {
+		width: 100%;
+		padding: 10px 15px;
+		margin: 4px 0;
+		display: inline-block;
+		border: 1px solid #ccc;
+		border-radius: 4px;
+		box-sizing: border-box;
+	}
+</style>
