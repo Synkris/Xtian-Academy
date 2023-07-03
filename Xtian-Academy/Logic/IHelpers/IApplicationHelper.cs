@@ -14,5 +14,7 @@ namespace Logic.IHelpers
         Task<ApplicationUser> AuthenticateUser(LoginViewModel loginDetail);
         string GetUserDashboardPage(ApplicationUser userr);
         Task<bool> LogOut();
-    }
+        string GetUserLayout(string username);
+
+	}
 }
