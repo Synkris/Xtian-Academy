@@ -87,5 +87,26 @@ namespace Logic.Helpers
 
         }
 
-    }
+		public bool ChangePasswordAlert(ApplicationUser userDetail, string loginLink)
+		{
+			string toEmail = userDetail.Email;
+			string subject = "PASSWORD CHANGE ALERT";
+			string message = "Dear " + userDetail.FirstName + "," + "<br>" + "<br>" + "Your password has been changed successfully. If you did not make this change please email us at agbo4chris@yahoo.com" + "<br>" + "<br>" + "Regards";
+			_emailService.SendEmail(toEmail, subject, message);
+
+			ChangePasswordMailTemlate(userDetail, loginLink);
+			return true;
+		}
+
+		public bool ChangePasswordMailTemlate(ApplicationUser userDetail, string loginLink)
+		{
+			string toEmail = userDetail.Email;
+			string subject = "PASSWORD CHANGED SUCCESSFULLY ";
+			string message = "Hi " + userDetail.FirstName + ", " + "<br>" + "<br>" + "You have successfully changed your password. please click on the link below to login with your new password" + "<br>" + "<br>" + "Regards" + "<br>" + "<br>" +
+				   "<a  href='" + loginLink + "' target='_blank'>" + "<button style='color:white; background-color:#018DE4; padding:10px; border:10px;'>Login</button>" + "</a>";
+			_emailService.SendEmail(toEmail, subject, message);
+			return true;
+		}
+
+	}
 }

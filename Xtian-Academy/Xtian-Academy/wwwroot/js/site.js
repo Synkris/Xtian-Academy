@@ -487,4 +487,40 @@ function ApplicantDocumentation() {
     }
 }
 
+// CHANGE PASSWORD POST ACTION
+function ChangePasswordPost() {
+
+    $('#loader').show();
+    $('#loader-wrapper').show();
+    var data = {};
+    data.OldPassword = $("#OldPasswrd").val();
+    data.NewPassword = $("#NewPasswrd").val();
+    data.ConfirmPassword = $("#Cpasswrd").val();
+    let changePasswordDetails = JSON.stringify(data);
+    $.ajax({
+        type: 'POST',
+        dataType: 'Json',
+        url: '/Accounts/ChangePasswordPost',
+        data:
+        {
+            userPasswordDetails: changePasswordDetails
+        },
+        success: function (result) {
+
+            if (!result.isError) {
+                $("#loader").fadeOut(3000);
+                successAlertWithRedirect(result.msg, result.url)
+            }
+            else {
+                $("#loader").fadeOut(3000);
+                errorAlert(result.msg)
+            }
+        },
+        Error: function (ex) {
+            $("#loader").fadeOut(3000);
+            errorAlert(ex);
+        }
+    });
+}
+
 

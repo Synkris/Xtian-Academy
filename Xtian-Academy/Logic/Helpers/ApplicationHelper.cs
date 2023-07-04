@@ -103,5 +103,23 @@ namespace Logic.Helpers
             await _signInManager.SignOutAsync();
             return true;
         }
-    }
+
+		public string GetUserLayout(string username)
+		{
+			var accountType = _userHelper.FindByUserNameAsync(username).Result;
+			var userRole = _userManager.GetRolesAsync(accountType).Result.FirstOrDefault();
+			if (userRole != null)
+			{
+				if (userRole == "SuperAdmin" || userRole == "Admin")
+				{
+					return "~/Views/Shared/_AdminLayout.cshtml";
+				}
+				else
+				{
+					return "~/Views/Shared/_StudentLayout.cshtml";
+				}
+			}
+			return null;
+		}
+	}
 }

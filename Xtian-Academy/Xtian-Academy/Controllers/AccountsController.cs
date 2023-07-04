@@ -3,6 +3,7 @@ using Core.Models;
 using Core.ViewModels;
 using Logic.Helpers;
 using Logic.IHelpers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -143,5 +144,39 @@ namespace Xtian_Academy.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-    }
+		// ChangePassword GET ACTION
+		[Authorize]
+		public IActionResult ChangePassword()
+		{
+			ViewBag.Layout = _applicationHelper.GetUserLayout(User.Identity.Name);
+			return View();
+		}
+
+		// ChangePassword POST ACTION
+		[HttpPost]
+		public async Task<JsonResult> ChangePasswordPost(string userPasswordDetails)
+		{
+			if (userPasswordDetails != null)
+			{
+				var passDetails = JsonConvert.DeserializeObject<ApplicationUserViewModel>(userPasswordDetails);
+				if (passDetails.NewPassword != passDetails.ConfirmPassword)
+				{
+					return Json(new { isError = true, msg = "Password and Confirm Pasword not the same" });
+				}
+				var currentUser = _userHelper.FindByUserNameAsync(User.Identity.Name).Result;
+				var result = await _userManager.ChangePasswordAsync(currentUser, passDetails.OldPassword, passDetails.NewPassword);
+				if (result.Succeeded)
+				{
+					string loginLink = HttpContext.Request.Scheme.ToString() + "://"
+						+ HttpContext.Request.Host.ToString() + "/Accounts/Login";
+
+					_emailHelper.ChangePasswordAlert(currentUser, loginLink);
+					var linkToClick = "/Accounts/ChangePassword";
+					return Json(new { isError = false, msg = "Password Changed Successfully", url = linkToClick });
+				}
+				return Json(new { isError = true, msg = "Failed" });
+			}
+			return Json(new { isError = true, msg = "Input the required fields" });
+		}
+	}
 }

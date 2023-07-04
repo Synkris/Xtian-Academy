@@ -12,7 +12,9 @@ namespace Logic.IHelpers
         bool SendMailToApplicant(ApplicationUser userDetail, string linkToClick);
         Task<UserVerification> CreateUserToken(string userEmail);
         bool VerificationEmail(string applicantEmail, string linkToClick);
+		bool ChangePasswordAlert(ApplicationUser userDetail, string loginLink);
 
 
-    }
+
+	}
 }
