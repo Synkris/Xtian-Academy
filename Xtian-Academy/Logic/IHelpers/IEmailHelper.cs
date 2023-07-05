@@ -13,8 +13,12 @@ namespace Logic.IHelpers
         Task<UserVerification> CreateUserToken(string userEmail);
         bool VerificationEmail(string applicantEmail, string linkToClick);
 		bool ChangePasswordAlert(ApplicationUser userDetail, string loginLink);
+        Task PasswordResetedTemplateEmailerAsync(ApplicationUser userEmail, string linkToClick);
+        void ForgotPasswordTemplateEmailer(ApplicationUser userEmail, string linkToClick);
+        bool Gratitude(string applicantEmail);
 
 
 
-	}
+
+    }
 }

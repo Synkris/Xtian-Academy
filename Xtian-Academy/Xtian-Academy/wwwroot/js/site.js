@@ -523,4 +523,84 @@ function ChangePasswordPost() {
     });
 }
 
+// FORGOT PASSWORD POST ACTION
+function ForgotPasswordReset() {
+    debugger;
+    var email = $("#Email").val();
+    if (email != "") {
+        let emailAccount = email;
+        $.ajax({
+            type: 'POST',
+            url: '/Accounts/ForgotPassword', // we are calling json method
+            dataType: 'json',
+            data:
+            {
+                email: emailAccount,
+            },
+            success: function (result) {
+
+                if (!result.isNotVerified) {
+                    var url = '/Accounts/Login';
+                    successAlertWithRedirect(result.msg, url)
+                }
+                else {
+                    errorAlert(result.msg);
+                }
+            },
+            Error: function (ex) {
+                errorAlert(ex);
+            }
+        });
+    }
+    else {
+        errorAlert("Enter your email");
+    }
+}
+
+// SET NEW PASSWORD POST ACTION
+function resetPassword() {
+
+    $('#loader').show();
+    $('#loader-wrapper').show();
+    var data = {};
+    data.Password = $("#newPasswordId").val();
+    data.ConfirmPassword = $("#confirmPasswordId").val();
+    data.Token = $("#Token").val();
+    let resetPasswordViewModel = JSON.stringify(data);
+    if (data.Password != "" && data.ConfirmPassword != "" && data.Password == data.ConfirmPassword) {
+        $.ajax({
+            type: 'POST',
+            url: '/Accounts/ResetUserPassword', // we are calling json method
+            dataType: 'json',
+            data:
+            {
+                viewmodel: resetPasswordViewModel,
+            },
+            success: function (result) {
+
+                if (!result.isError) {
+                    $("#loader").fadeOut(3000);
+                    successAlert(result.msg)
+                    window.location.reload;
+                }
+                else {
+                    $("#loader").fadeOut(3000);
+                    errorAlert(result.msg);
+                }
+            },
+            error: function (ex) {
+                $("#loader").fadeOut(3000);
+                errorAlert(ex);
+            }
+        });
+    } else {
+        if (data.Password == "") {
+            errorAlert("Enter password");
+        }
+        if (data.Password != data.ConfirmPassword) {
+            errorAlert("Password and password confirm not matched");
+        }
+    }
+}
+
 

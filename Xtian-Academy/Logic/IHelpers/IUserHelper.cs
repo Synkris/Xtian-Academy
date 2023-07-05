@@ -14,5 +14,8 @@ namespace Logic.IHelpers
         Task<ApplicationUser> FindByPhoneNumberAsync(string phoneNumber);
         Task<ApplicationUser> FindByEmailAsync(string email);
         //Task<ApplicationUser> FindByIdAsync(string Id);
+        Task<UserVerification> CreateUserToken(string userEmail);
+        Task<UserVerification> GetUserToken(Guid token);
+        Task<bool> MarkTokenAsUsed(UserVerification userVerification);
     }
 }
