@@ -42,5 +42,64 @@ namespace Logic.Helpers
         //{
         //    return await _userManager.Users.Where(s => s.Id == Id)?.FirstOrDefaultAsync();
         //}
+
+        public async Task<UserVerification> CreateUserToken(string userEmail)
+        {
+            try
+            {
+                var user = await FindByEmailAsync(userEmail);
+                if (user != null)
+                {
+                    UserVerification userVerification = new UserVerification()
+                    {
+                        UserId = user.Id,
+                    };
+                    await _context.AddAsync(userVerification);
+                    await _context.SaveChangesAsync();
+                    return userVerification;
+                }
+                else
+                {
+                    return null;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
+
+        public async Task<UserVerification> GetUserToken(Guid token)
+        {
+            return await _context.UserVerifications.Where(t => !t.Used && t.Token == token)?.Include(s => s.User).FirstOrDefaultAsync();
+
+        }
+        public async Task<bool> MarkTokenAsUsed(UserVerification userVerification)
+        {
+            try
+            {
+                var VerifiedUser = _context.UserVerifications.Where(s => s.UserId == userVerification.User.Id && s.Used != true).FirstOrDefault();
+                if (VerifiedUser != null)
+                {
+                    userVerification.Used = true;
+                    userVerification.DateUsed = DateTime.Now;
+                    _context.Update(userVerification);
+                    await _context.SaveChangesAsync();
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
     }
 }

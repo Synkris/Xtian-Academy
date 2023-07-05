@@ -108,5 +108,74 @@ namespace Logic.Helpers
 			return true;
 		}
 
-	}
+        public async void ForgotPasswordTemplateEmailer(ApplicationUser userEmail, string linkToClick)
+        {
+            var getUserId = await _userHelper.FindByUserNameAsync(userEmail.FirstName);
+            if (userEmail != null)
+            {
+                string toEmail = userEmail.Email;
+                string subject = "Reset your Email - Xtian Academy ";
+                string message = "Hi!" + " " + userEmail.FirstName + "," + "<br/>" + "<br/>" +
+                    "You requested for a password reset. please click on the link below to create a new password," + "<br/>" +
+                    "<a  href='" + linkToClick + "' target='_blank'>" + "<button style='color:white; background-color:blue; padding:10px; border:10px;'>Password Reset</button>" + "</a>" + "<br/>" +
+                    "If the link does not work copy the link here to your browser" + "<br/>" +
+                    "<a  href='" + linkToClick + "' target='_blank'>" + linkToClick + "</a>" + "<br/>" +
+                    "Need help? We’re here for you.Simply reply to this email to contact us. <br/>" +
+
+                    "Kind regards,<br/>" +
+                    "Xtian Limited Group.";
+                _emailService.SendEmail(toEmail, subject, message);
+
+            }
+
+        }
+
+        public async Task PasswordResetedTemplateEmailerAsync(ApplicationUser userEmail, string linkToClick)
+        {
+            var getUserId = await _userHelper.FindByUserNameAsync(userEmail.FirstName);
+            if (userEmail != null)
+            {
+                string toEmail = userEmail.Email;
+                string subject = "Reset your Email - Xtian Academy ";
+                string message = "Hi!" + userEmail.FirstName + "," + "<br/>" + "<br/>" +
+                "You requested for a password reset." + "Your password has been changed.If you did not make this change please email us at support@safecash.com<br> Regards" + " < br/>" +
+                    "<a  href='" + linkToClick + "' target='_blank'>" + "<button style='color:white; background-color:#FFA76F; padding:10px; border:10px;'>Verify Me Now</button>" + "</a>" + "<br/>" +
+                   "If you have any trouble with your account, you can always email us at agbo4chris@yahoo.com," + "<br/>" +
+                    "Need help? We’re here for you.Simply reply to this email to contact us. <br/>" +
+
+                    "Kind regards,<br/>" +
+                    "Xtian Limited Group.";
+                _emailService.SendEmail(toEmail, subject, message);
+
+            }
+        }
+
+        public bool Gratitude(string applicantEmail)
+        {
+            try
+            {
+
+                if (applicantEmail != null)
+                {
+
+                    string toEmail = applicantEmail;
+                    string subject = "Email Verified Successfully";
+                    string message = "Your Email has been verified.Thank you for applying with Bivisoft Academy.<br/> " +
+                        "<br/>" + "<br/>" + "Need help? We’re always here for you.Simply reply to this email to reach us. <br/>" + "<br/>" +
+                    "Kind regards,<br/>" +
+                    "<b>Bivisoft Limited.</b>";
+                    _emailService.SendEmail(toEmail, subject, message);
+                    return true;
+                };
+
+                return false;
+            }
+
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+    }
 }

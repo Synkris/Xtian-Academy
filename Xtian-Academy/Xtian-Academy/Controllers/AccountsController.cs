@@ -178,5 +178,96 @@ namespace Xtian_Academy.Controllers
 			}
 			return Json(new { isError = true, msg = "Input the required fields" });
 		}
-	}
+
+        [HttpGet]
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> ForgotPassword(ApplicationUser applicationUser)
+        {
+            try
+            {
+                if (applicationUser != null)
+                {
+                    var user = await _userHelper.FindByEmailAsync(applicationUser.Email);
+                    if (user != null)
+                    {
+                        var userToken = await _userHelper.CreateUserToken(applicationUser.Email);
+                        if (userToken != null)
+                        {
+                            await _context.SaveChangesAsync();
+                            ModelState.Clear();
+
+                            string linkToClick = HttpContext.Request.Scheme.ToString() + "://" +
+                               HttpContext.Request.Host.ToString() + "/Accounts/ResetPassword?token=" + userToken.Token;
+
+                            _emailHelper.ForgotPasswordTemplateEmailer(userToken.User, linkToClick);
+
+                            return Json(new { isNotVerified = false, msg = ("A password reset link has been sent to your email address please check your email for the next action.") });
+                        }
+                        else
+                        {
+                            return Json(new { isNotVerified = true, msg = ("A password reset failed.") });
+
+                        }
+                    }
+                    else
+                    {
+                        return Json(new { isNotVerified = true, msg = ("Account Not Found") });
+
+                    }
+                }
+                else
+                {
+                    return Json(new { isNotVerified = true, msg = ("A password reset failed.") });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { isError = true, msg = "An unexpected error occured " + ex.Message });
+
+            }
+        }
+
+        public IActionResult EmailVerified(string token)
+        {
+            if (!string.IsNullOrEmpty(token))
+            {
+                Guid userToken = Guid.Parse(token);
+
+                var userVerification = _userHelper.GetUserToken(userToken).Result;
+                if (userVerification == null || userVerification.Token == Guid.Empty)
+                {
+                    return RedirectToAction("Login");
+                }
+                if (userVerification.User.EmailConfirmed)
+                {
+                    return View();
+                }
+                if (userVerification.Used)
+                {
+                    return View();
+                }
+                else
+                {
+                    userVerification.Used = true;
+                    userVerification.DateUsed = DateTime.Now;
+                    userVerification.User.EmailConfirmed = true;
+
+                    _context.Update(userVerification);
+                    _context.Update(userVerification.User);
+
+                    var sendemail = _emailHelper.Gratitude(userVerification.User.Email);
+                    _context.SaveChanges();
+                    return View();
+                }
+            }
+            return RedirectToAction("Login");
+        }
+
+    }
 }
