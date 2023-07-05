@@ -1,0 +1,64 @@
+﻿@{
+    ViewData["Title"] = "Registration Page";
+}
+
+<div class="container">
+	<div class="row g-4 justify-content-center">
+		<div class="col-lg-8 col-md-10 col-sm-12 my-6 mb-0 wow fadeInUp" data-wow-delay="0.1s">
+			<div class="bg-dark  p-4" style="border-radius: 25px;">
+                <h3 class="mb-2 text-center text-primary">Register</h3>
+                <p class="mb-5 text-center text-white"><b>Access to admin dashboard</b></p>
+				<div class="row g-3">
+					<div class="col-lg-6 col-md-6 col-sm-12 mt-1 mb-3">
+                        <p class="text-left mb-0 text-primary"><b>First Name</b></p>
+						<div class="form-floating">
+							<input type="text" class="form-control border-0" id="FirstName" placeholder="Enter first name">
+							<label>Enter first name</label>
+						</div>
+						<p class="text-danger" id="fNameVDT" style="display: none;"><b>Enter first name</b></p>
+					</div>
+					<div class="col-lg-6 col-md-6 col-sm-12 mt-1 mb-3">
+                        <p class="text-left mb-0 text-primary"><b>Last Name</b></p>
+						<div class="form-floating">
+							<input type="text" class="form-control border-0" id="LastName" placeholder="Enter Last Name">
+							<label for="cname">Enter Last Name</label>
+						</div>
+						<p class="text-danger" id="lNameVDT" style="display: none;"><b>Enter last name</b></p>
+					</div>
+                    <div class="col-sm-12 mt-1 mb-3">
+                        <p class="text-left mb-0 text-primary"><b>Email</b></p>
+						<div class="form-floating">
+							<input type="email" class="form-control border-0" id="Email" placeholder="Enter Email">
+							<label>Enter Email</label>
+						</div>
+						<p class="text-danger" id="emailVDT" style="display: none;"><b>Enter email</b></p>
+					</div>
+                    <div class="col-lg-6 col-md-6 col-sm-12 mt-1 mb-3">
+                        <p class="text-left mb-0 text-primary"><b>Password</b></p>
+						<div class="form-floating">
+							<input type="password" class="form-control border-0" id="Passwrd" placeholder="Enter password">
+							<label>Enter password</label>
+						</div>
+						<p class="text-danger" id="passwrdVDT" style="display: none;"><b>Enter password</b></p>
+					</div>
+					<div class="col-lg-6 col-md-6 col-sm-12 mt-1 mb-3">
+                        <p class="text-left mb-0 text-primary"><b>Repeat Password</b></p>
+						<div class="form-floating">
+							<input type="password" class="form-control border-0" id="ConfirmPasswrd" placeholder="Confirm password">
+							<label>Confirm password</label>
+						</div>
+						<p class="text-danger" id="cpasswrdVDT" style="display: none;"><b>Password not matched</b></p>
+					</div>
+					<div class="col-12 mt-4">
+						<button class="btn btn-primary w-100 py-2 text-center" style="border-radius: 15px;" onclick="RegisterAdmin()" type="submit">Register</button>
+					</div>
+					<div class="col-12">
+						<div class="form-floating text-center">
+							<p class="mb-2 text-center">Already have an account? <a class="text-primary" asp-controller="Accounts" asp-action="Login"><b>Login</b></a></p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

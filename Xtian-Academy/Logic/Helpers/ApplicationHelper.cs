@@ -121,5 +121,33 @@ namespace Logic.Helpers
 			}
 			return null;
 		}
-	}
+
+        public async Task<ApplicationUser> RegisterAdminService(ApplicationUserViewModel applicationUserViewModel)
+        {
+            if (applicationUserViewModel != null)
+            {
+                var newInstanceOfApplicantModelAboutToBCreated = new ApplicationUser();
+                {
+                    newInstanceOfApplicantModelAboutToBCreated.FirstName = applicationUserViewModel.FirstName;
+                    newInstanceOfApplicantModelAboutToBCreated.LastName = applicationUserViewModel.LastName;
+                    newInstanceOfApplicantModelAboutToBCreated.Email = applicationUserViewModel.Email;
+                    newInstanceOfApplicantModelAboutToBCreated.UserName = applicationUserViewModel.Email;
+                    newInstanceOfApplicantModelAboutToBCreated.Deactivated = false;
+                    newInstanceOfApplicantModelAboutToBCreated.IsAdmin = true;
+                    newInstanceOfApplicantModelAboutToBCreated.DateRegistered = DateTime.Now;
+                }
+                var result = await _userManager.CreateAsync(newInstanceOfApplicantModelAboutToBCreated, applicationUserViewModel.Password);
+                if (result.Succeeded)
+                {
+                    return newInstanceOfApplicantModelAboutToBCreated;
+
+                }
+                return null;
+            }
+            return null;
+
+        }
+
+
+    }
 }
