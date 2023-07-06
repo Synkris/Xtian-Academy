@@ -15,6 +15,8 @@ namespace Logic.IHelpers
         string GetUserDashboardPage(ApplicationUser userr);
         Task<bool> LogOut();
         string GetUserLayout(string username);
+        Task<ApplicationUser> RegisterAdminService(ApplicationUserViewModel applicationUserViewModel);
 
-	}
+
+    }
 }

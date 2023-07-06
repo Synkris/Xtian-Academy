@@ -603,4 +603,111 @@ function resetPassword() {
     }
 }
 
+// Admin Registration POST ACTION
+function RegisterAdmin() {
+    var data = {};
+    data.FirstName = $('#FirstName').val();
+    data.LastName = $('#LastName').val();
+    data.Email = $('#Email').val();
+    data.Password = $('#Passwrd').val();
+    data.ConfirmPassword = $('#ConfirmPasswrd').val();
+    if (data.FirstName != "" && data.LastName != "" && data.Email != "" && data.Password != "" && data.Password == data.ConfirmPassword) {
+        let applicationViewModel = JSON.stringify(data);
+        $.ajax({
+            type: 'POST',
+            dataType: 'Json',
+            url: '/Accounts/AdminRegisteration',
+            data:
+            {
+                applicationUserViewModel: applicationViewModel,
+            },
+            success: function (result) {
 
+                if (!result.isError) {
+                    $("#loader").fadeOut(3000);
+                    var url = '/Accounts/Login'
+                    successAlertWithRedirect(result.msg, url)
+                }
+                else {
+                    $("#loader").fadeOut(3000);
+                    errorAlert(result.msg)
+                }
+            },
+            Error: function (ex) {
+                $("#loader").fadeOut(3000);
+                errorAlert(ex);
+            }
+        });
+    }
+    else {
+        if (data.FirstName == "") {
+            document.querySelector("#fNameVDT").style.display = "block";
+        } else {
+            document.querySelector("#fNameVDT").style.display = "none";
+        }
+        if (data.LastName == "") {
+            document.querySelector("#lNameVDT").style.display = "block";
+        } else {
+            document.querySelector("#lNameVDT").style.display = "none";
+        }
+        if (data.Email == "") {
+            document.querySelector("#emailVDT").style.display = "block";
+        } else {
+            document.querySelector("#emailVDT").style.display = "none";
+        }
+        if (data.Password == "") {
+            document.querySelector("#passwrdVDT").style.display = "block";
+        } else {
+            document.querySelector("#passwrdVDT").style.display = "none";
+            if (data.Password != data.ConfirmPassword) {
+                document.querySelector("#cpasswrdVDT").style.display = "block";
+            } else {
+                document.querySelector("#cpasswrdVDT").style.display = "none";
+            }
+        }
+    }
+}
+
+function viewApplcantsData(HasCompletedNysc, HasLaptop, HasAnyProgrammingExp, ApplicantResideInEnugu, ProgrammingLanguagesExps, ReasonForProgramming) {
+
+    var nyscCheck = HasCompletedNysc;
+    var laptopCheck = HasLaptop;
+    var programmingExpCheck = HasAnyProgrammingExp;
+    var ResideInEnuguCheck = ApplicantResideInEnugu;
+    if (nyscCheck == "Yes") {
+        document.querySelector("#nyscChecker1").style.display = "block";
+        document.querySelector("#nyscChecker2").style.display = "none";
+    } else {
+        document.querySelector("#nyscChecker1").style.display = "none";
+        document.querySelector("#nyscChecker2").style.display = "block";
+    }
+    if (laptopCheck == "Yes") {
+        document.querySelector("#laptopChecker1").style.display = "block";
+        document.querySelector("#laptopChecker2").style.display = "none";
+
+    } else {
+        document.querySelector("#laptopChecker1").style.display = "none";
+        document.querySelector("#laptopChecker2").style.display = "block";
+    }
+    if (programmingExpCheck == "Yes") {
+        document.querySelector("#programmingExpChecker1").style.display = "block";
+        document.querySelector("#programmingExpChecker2").style.display = "none";
+    } else {
+        document.querySelector("#programmingExpChecker1").style.display = "none";
+        document.querySelector("#programmingExpChecker2").style.display = "block";
+    }
+    if (ResideInEnuguCheck == "Yes") {
+        document.querySelector("#resideInEnuguChecker1").style.display = "block";
+        document.querySelector("#resideInEnuguChecker2").style.display = "none";
+    } else {
+        document.querySelector("#resideInEnuguChecker1").style.display = "none";
+        document.querySelector("#resideInEnuguChecker2").style.display = "block";
+    }
+
+    $("#nysc").val(nyscCheck);
+    $("#laptop").val(laptopCheck);
+    $("#programmingExp").val(programmingExpCheck);
+    $("#ApplicantResideInEnugu").val(ResideInEnuguCheck);
+    $("#programmingExpList").val(ProgrammingLanguagesExps);
+    $("#reasons").val(ReasonForProgramming);
+}

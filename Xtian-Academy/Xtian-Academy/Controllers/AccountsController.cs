@@ -269,5 +269,55 @@ namespace Xtian_Academy.Controllers
             return RedirectToAction("Login");
         }
 
+        public IActionResult UnverifiedAccount()
+        {
+            return View();
+        }
+
+        // ADMIN REGISTRAION GET ACTION
+        [HttpGet]
+        public IActionResult RegisterAdmin()
+        {
+            return View();
+        }
+
+        // ADMIN REGISTRAION POST 
+        [HttpPost]
+        public async Task<JsonResult> AdminRegisteration(string applicationUserViewModel)
+        {
+            try
+            {
+                var newApplicant = JsonConvert.DeserializeObject<ApplicationUserViewModel>(applicationUserViewModel);
+
+                // Query the user details if it exists in the Db B4 Authentication
+                var emailCheck = await _userHelper.FindByEmailAsync(newApplicant.Email);
+                if (emailCheck != null)
+                {
+                    return Json(new { isError = true, msg = "Email already exist" });
+                }
+                // End of Query  4  the user details if it exists in the Db B4 Authentication
+
+                var returndResultFrmRegisterService = _applicationHelper.RegisterAdminService(newApplicant).Result;
+                if (returndResultFrmRegisterService != null)
+                {
+                    var userToken = await _emailHelper.CreateUserToken(newApplicant.Email);
+                    var addToRole = _userManager.AddToRoleAsync(returndResultFrmRegisterService, "Admin").Result;
+                    if (addToRole.Succeeded & userToken != null)
+                    {
+                        string linkToClick = HttpContext.Request.Scheme.ToString() + "://"
+                        + HttpContext.Request.Host.ToString() + "/Accounts/EmailVerified?token=" + userToken.Token;
+                        _emailHelper.VerificationEmail(newApplicant.Email, linkToClick);
+                        return Json(new { isError = false, msg = "Registeration successful, Check your mail to complete application" });
+
+                    }
+                }
+                return Json(new { isError = true, msg = "Application Failed" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { isError = true, msg = "An unexpected error occured " + ex.Message });
+            }
+        }
+
     }
 }
