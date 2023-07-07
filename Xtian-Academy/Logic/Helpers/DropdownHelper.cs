@@ -25,5 +25,24 @@ namespace Logic.Helpers
             enumList.Insert(0, common);
             return enumList;
         }
+
+        public List<TrainingCourse> DropdownOfCourses()
+        {
+            try
+            {
+                var common = new TrainingCourse()
+                {
+                    Id = 0,
+                    Title = "Select Course"
+                };
+                var listOfCourses = _context.TrainingCourse.Where(x => x.Id != 0 && x.IsActive == true && x.IsDeleted == false).OrderBy(p => p.Title).ToList();
+                listOfCourses.Insert(0, common);
+                return listOfCourses;
+            }
+            catch (Exception exp)
+            {
+                throw exp;
+            }
+        }
     }
 }

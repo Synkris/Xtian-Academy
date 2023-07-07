@@ -13,10 +13,18 @@ namespace Logic.IHelpers
         Task<ApplicationUser> FindByUserNameAsync(string userName);
         Task<ApplicationUser> FindByPhoneNumberAsync(string phoneNumber);
         Task<ApplicationUser> FindByEmailAsync(string email);
-        //Task<ApplicationUser> FindByIdAsync(string Id);
+        Task<ApplicationUser> FindByIdAsync(string Id);
         Task<UserVerification> CreateUserToken(string userEmail);
         Task<UserVerification> GetUserToken(Guid token);
         Task<bool> MarkTokenAsUsed(UserVerification userVerification);
         ApplicantDocumment GetApplicationDocummentByUserId(string userID);
+        List<int> GetListOfCourseIdStudentPaid4(string userID);
+        TrainingVideos GetVideosById(Guid Id);
+        List<ApplicationUser> GetAllOnboardApplicantsFromDB();
+        List<Payments> GetPaymentList();
+        Payments GetPaymentById(int? Id);
+        List<TrainingCourse> GetAllTrainingCourseFromDB();
+        TrainingCourse GetTrainingCourseById(int? Id);
+        List<TrainingVideos> GetTrainingVideos();
     }
 }

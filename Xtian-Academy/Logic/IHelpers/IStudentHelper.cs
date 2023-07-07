@@ -15,6 +15,7 @@ namespace Logic.IHelpers
         ApplicantDocumment UpdateApplicantDocumentsInfo(ApplicantDocumment applicantDocuments);
         bool DeosApplicantDocummentExist(string username);
         StudentDashBoardViewModel DashboardBuildingServices(string userName);
+        List<TrainingCourse> GetAllTrainingCourseDB();
 
 
     }

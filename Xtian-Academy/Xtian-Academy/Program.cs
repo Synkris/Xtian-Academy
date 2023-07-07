@@ -14,8 +14,9 @@ builder.Services.AddScoped<IUserHelper, UserHelper>()
         .AddScoped<IEmailHelper, EmailHelper>()
         .AddScoped<IDropdownHelper, DropdownHelper>()
         .AddScoped<IApplicationHelper, ApplicationHelper>()
-        .AddScoped<IStudentHelper, StudentHelper>();
-        
+        .AddScoped<IStudentHelper, StudentHelper>()
+        .AddScoped<IAdminHelper, AdminHelper>();
+
 //builder.Services.AddScoped<IUserHelper, UserHelper>();
 builder.Services.AddSingleton<IGeneralConfiguration>(builder.Configuration.GetSection("GeneralConfiguration").Get<GeneralConfiguration>());
 builder.Services.AddSingleton<IEmailConfiguration>(builder.Configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>());

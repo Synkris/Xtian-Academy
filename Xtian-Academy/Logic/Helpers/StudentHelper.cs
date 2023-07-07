@@ -118,6 +118,15 @@ namespace Logic.Helpers
             }
             return adminDashboardData;
         }
+        public List<TrainingCourse> GetAllTrainingCourseDB()
+        {
+            var allTrainingCourse = _context.TrainingCourse.Where(t => !t.IsDeleted && t.IsActive).ToList();
+            if (allTrainingCourse.Any())
+            {
+                return allTrainingCourse;
+            }
+            return allTrainingCourse;
+        }
 
 
     }

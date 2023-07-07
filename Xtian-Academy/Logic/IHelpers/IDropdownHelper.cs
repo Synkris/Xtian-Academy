@@ -10,5 +10,6 @@ namespace Logic.IHelpers
     public interface IDropdownHelper
     {
         List<DropDown> GetDropDownEnumsList();
+        List<TrainingCourse> DropdownOfCourses();
     }
 }

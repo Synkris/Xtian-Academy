@@ -177,5 +177,53 @@ namespace Logic.Helpers
             }
         }
 
+        public bool SendPaymentAprovalMsg(ApplicationUser userDetail, string course)
+        {
+            try
+            {
+                if (userDetail != null)
+                {
+                    string toEmail = userDetail.Email;
+                    string subject = "PAYMENT APPROVED";
+                    string message = "Dear " + userDetail.FirstName + "<br/>" + "<br/>" + "The transaction you made for " + course + " course was successful, You can access the course.<br/> " +
+                        "<br/>" + "Good luck!!! <br/>";
+                    _emailService.SendEmail(toEmail, subject, message);
+                    return true;
+                };
+
+                return false;
+            }
+
+            catch (Exception)
+            {
+                throw;
+            }
+
+        }
+
+        public bool SendPaymentDeclineMsg(ApplicationUser userDetail, string course)
+        {
+            try
+            {
+                if (userDetail != null)
+                {
+                    string toEmail = userDetail.Email;
+                    string subject = "PAYMENT DECLINED";
+                    string message = "Dear " + userDetail.FirstName + "<br/>" + "<br/>" + "The transaction you made for " + course + " course wasn't successful, Check your transaction history to confirm. for any clarification reach Out to us at academy@bivisoft.com<br/> " +
+                        "<br/>" + " Regards <br/>";
+                    _emailService.SendEmail(toEmail, subject, message);
+                    return true;
+                };
+
+                return false;
+            }
+
+            catch (Exception)
+            {
+                throw;
+            }
+
+        }
+
     }
 }

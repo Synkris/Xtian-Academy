@@ -1,0 +1,302 @@
+﻿@using Core.Enum
+@model IEnumerable<Core.Models.ApplicationUser>
+@{
+    ViewData["Title"] = "Onboarding Student";
+	Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+
+    body {
+        counter-reset: Serial; /* / Set the Serial counter to 0 /*/
+    }
+
+    tr td:first-child:before  {
+        counter-increment: Serial; /* / Increment the Serial counter /*/
+        content: counter(Serial); /*  / Display the counter /*/
+    }
+</style>
+
+<!-- Page Header -->
+<div class="page-header">
+	<div class="row">
+		<div class="col-sm-12">
+			<h3 class="page-title">Onboarding Student</h3>
+		</div>
+	</div>
+</div>
+<!-- /Page Header -->
+					
+<!-- Search Filter -->
+<div class="row filter-row">
+	<div class="col-sm-6 col-md-3 mt-1 mb-4">
+		<input type="text" class="form-control" id="002" placeholder="Username Search">
+	</div>
+	<div class="col-sm-6 col-md-3 mt-1 mb-4">
+		<input type="text" class="form-control" id="002" placeholder="Phone Number Search">
+	</div>
+	<div class="col-sm-6 col-md-3 mt-1 mb-4">
+		<input type="text" class="form-control" id="002" placeholder="Email Search">
+	</div>
+	<div class="col-sm-6 col-md-3 mb-4">  
+		<a href="#" class="btn newSearchBtn btn-block"> Search </a>
+	</div>
+</div>
+<!-- Search Filter -->
+
+<div class="row">
+	<div class="col-md-12">
+		@if (@Model.Count() > 0)
+		{
+			<div class="table-responsive">
+				<table class="table table-striped custom-table mb-0 datatable">
+					<thead>
+						<tr>
+							<th>S/n</th>
+							<th>Username</th>
+							<th>Phone Number</th>
+							<th>Email</th>
+							<th>Live in Enugu</th>
+							<th class="text-center">View Details</th>
+							<th class="text-center">Download CV</th>
+							<th>Status</th>
+							<th class="text-center">Actions</th>
+											
+						</tr>
+					</thead>
+					@foreach(var applicant in Model)
+					{
+						<tbody>
+							<tr>
+								<td></td>
+								<td>@applicant.UserName</td>
+								<td>@applicant.PhoneNumber</td>
+								<td>@applicant.Email</td>
+								<td>@applicant.ApplicantResideInEnugu</td>
+								<td class="text-center">
+									<div class="action-label">
+										<a class="btn btn-white btn-sm btn-rounded" data-toggle="modal" data-target="#view_applicant" onclick="viewApplcantsData('@applicant.HasCompletedNysc','@applicant.HasLaptop','@applicant.HasAnyProgrammingExp',
+																					'@applicant.ApplicantResideInEnugu','@applicant.ProgrammingLanguagesExps','@applicant.ReasonForProgramming')"><i class="fa fa-dot-circle-o mr-1 fafaColor"></i>Open</a>
+										@*<a class="btn btn-white btn-sm btn-rounded" data-toggle="modal" onclick="viewApplcantsData(@applicant.Id)" data-target="#view_applicant">
+											<i class="fa fa-dot-circle-o text-success"></i> Open
+										</a>*@
+									</div>
+								</td>
+								<td class="text-center">
+									<a href="@applicant.CV" class="btn newBtn download-offer" download><span><i class="fa fa-download fafaColor mr-1"></i> Download CV</span></a>
+								</td>
+								@if (applicant.Status == ApplicationStatus.Accepted)
+								{
+									<td class ="text-success">@applicant.Status</td>
+								}else if(applicant.Status ==ApplicationStatus.Rejected){
+
+									<td class="text-danger">@applicant.Status</td>
+								}else{
+
+									<td>@applicant.Status</td>
+								}
+								<td class="text-center">
+									<div class="dropdown dropdown-action">
+										<a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+										<div class="dropdown-menu dropdown-menu-right">
+											<a class="dropdown-item" href="#" data-toggle="modal" data-target="#accept_application" onclick="MappStudentIdForApproveAndDelicine('@applicant.Id')"><i class="fa fa-check-circle m-r-5 text-success"></i>Approve</a>
+											<a class="dropdown-item" href="#" data-toggle="modal" data-target="#decliine_application" onclick="MappStudentIdForApproveAndDelicine('@applicant.Id')"><i class="fa fa-trash-o m-r-5 text-danger"></i>Decline</a>
+										</div>
+									</div>
+								</td>
+						</tbody>
+					}
+				</table>
+			</div>
+		}
+		else
+		{
+			<div cclass="row p5 m-5">
+				<div class="col-md-12 text-center p-5 m5">
+					<h2>No Record Found</h2>
+				</div>
+			</div>
+		}
+	</div>
+</div>
+<!-- /Content End -->
+
+<!-- View Applicant Details  Modal -->
+<div id="view_applicant" class="modal custom-modal fade" role="dialog">
+	<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Applicant Details</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+					<div class="row">
+						<div class="col-sm-8">
+							<div class="form-group">
+								<label class="col-form-label">Have you completed your NYSC ?</label>
+							</div>
+						</div>
+						<div class="col-sm-2 text-center">
+							<div class="form-group">
+                                <input class="borderlessInput" disabled type="text" required id="nysc">
+							</div>
+						</div>
+						<div class="col-sm-2 text-center">
+							<div class="form-group" id="nyscChecker2" style="display:none">
+								<label class="col-form-label text-danger"><i class="fa fa-close"></i></label>
+							</div>
+							<div class="form-group" id="nyscChecker1" style="display:none">
+								<label class="col-form-label text-success"><i class="fa fa-check"></i></label>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-8">
+							<div class="form-group">
+								<label class="col-form-label">Do you have a laptop ?</label>
+							</div>
+						</div>
+						<div class="col-sm-2 text-center">
+							<div class="form-group">
+								<input class="borderlessInput" type="text" disabled id="laptop">
+							</div>
+						</div>
+						<div class="col-sm-2 text-center">
+							<div class="form-group" id="laptopChecker2" style="display:none">
+								<label class="col-form-label text-danger"><i class="fa fa-close"></i></label>
+							</div>
+							<div class="form-group" id="laptopChecker1" style="display:none">
+								<label class="col-form-label text-success"><i class="fa fa-check"></i></label>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-8">
+							<div class="form-group">
+								<label class="col-form-label">Have you programmed in any language before ?</label>
+							</div>
+						</div>
+						<div class="col-sm-2 text-center">
+							<div class="form-group">
+								<input class="borderlessInput" type="text" disabled id="programmingExp">
+							</div>
+						</div>
+						<div class="col-sm-2 text-center">
+							<div class="form-group" id="programmingExpChecker2" style="display:none">
+								<label class="col-form-label text-danger"><i class="fa fa-close"></i></label>
+							</div>
+							<div class="form-group" id="programmingExpChecker1" style="display:none">
+								<label class="col-form-label text-success"><i class="fa fa-check"></i></label>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-8">
+							<div class="form-group">
+								<label class="col-form-label">Are you currently in Enugu ?</label>
+							</div>
+						</div>
+						<div class="col-sm-2 text-center">
+							<div class="form-group">
+								<input class="borderlessInput" type="text" disabled id="ApplicantResideInEnugu">
+							</div>
+						</div>
+						<div class="col-sm-2 text-center">
+							<div class="form-group" id="resideInEnuguChecker2" style="display:none">
+								<label class="col-form-label text-danger"><i class="fa fa-close"></i></label>
+							</div>
+							<div class="form-group" id="resideInEnuguChecker1" style="display:none">
+								<label class="col-form-label text-success"><i class="fa fa-check"></i></label>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label class="col-form-label">If your answer above is YES, list the languages ?</label>
+							</div>
+						</div>
+						<div class="col-sm-6 text-center">
+							<div class="form-group">
+								<textarea class="borderlessInput" id="programmingExpList"  disabled></textarea>
+							</div>
+						</div>
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label class="col-form-label">Why do you want to become a software developer?</label>
+							</div>
+						</div>
+						<div class="col-sm-6 text-center">
+							<div class="form-group">
+								<textarea class="borderlessInput" id="reasons"  disabled></textarea>
+							</div>
+						</div>												
+					</div>
+					<div class="submit-section">
+						<button class="btn newBtn submit-btn" data-dismiss="modal">Close</button>
+					</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- /View Applicant Details Modal -->
+
+<!-- Accept Application Modal -->
+<div class="modal custom-modal fade" id="accept_application" role="dialog">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-body">
+				<div class="form-header">
+					<h3>Accept</h3>
+					<input hidden id="acceptApplicantId">
+					<p>Are you sure want to accept?</p>
+				</div>
+				<div class="modal-btn">
+					<div class="row">
+						<div class="col-6">
+							<a class="btn btn-success continue-btn" onclick="AcceptApplicationPost()">Accept</a>
+						</div>
+						<div class="col-6">
+							<a href="javascript:void(0);" data-dismiss="modal" class="btn btn-primary cancel-btn">Cancel</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- /Accept Application Modal -->
+
+<!-- Decline Application Modal -->
+<div class="modal custom-modal fade" id="decliine_application" role="dialog">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-body">
+				<div class="form-header">
+					<h3>Delicine</h3>
+					<input hidden id="rejectApplicantId">
+					<p>Are you sure want to decline?</p>
+				</div>
+				<div class="modal-btn">
+					<div class="row">
+						<div class="col-6">
+							<a class="btn btn-danger continue-btn" onclick="RejectApplicationPost()">Decline</a>
+						</div>
+						<div class="col-6">
+							<a href="javascript:void(0);" data-dismiss="modal" class="btn cancel-btn">Cancel</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- /Decline Application Modal -->
+<script>
+	function MappStudentIdForApproveAndDelicine(Id) {
+		$("#acceptApplicantId").val(Id);
+		$("#rejectApplicantId").val(Id);
+	}
+</script>
