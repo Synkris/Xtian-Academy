@@ -1,0 +1,69 @@
+﻿@model Core.Models.ApplicantDocumment
+
+@{
+    ViewData["Title"] = "EditApplicantDocuments";
+	Layout = "~/Views/Shared/_StudentLayout.cshtml";
+}
+<!-- Page Header -->
+<div class="page-header">
+	<div class="row">
+		<div class="col-sm-12">
+			<h3 class="page-title">Welcome to BiviSoft Academy</h3>
+			<ul class="breadcrumb">
+				<li class="breadcrumb-item active"></li>
+			</ul>
+		</div>
+	</div>
+</div>
+<!-- /Page Header -->
+
+<!-- Applicant page -->
+<div class="card">
+	<div class="card-header">
+		<h2 class="card-title mb-0">Edit Applicant Documents</h2>
+	</div>
+	<div class="card-body">
+		<div class="row">
+			<div class="col-md-10">
+			        <!-- FORM 1 -->
+					<div class="row">
+					<input type="text" class="form-control" value="@Model.Id" id="editApplicantId" hidden>
+						<div class="col-md-10 mb-3">
+							<label for="validationDefault01"> BVN </label>
+							<input type="number" class="form-control" id="editBVN" value="@Model.BVN" required>
+							<p class="text-danger" id="editBVNVDT" style="display: none;">Enter BVN</p>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-6 mb-3">
+							<label for="FirstGuarantor">Upload First Guarantor:</label><br/>
+							<input type="file" id="editFirstGuarantor" name="@Model.FirstGuarantor" required>
+							<p class="text-danger" id="editFirstGuarantorVDT" style="display: none;">Upload First Guarantor</p>
+						</div>
+						<div class="col-md-6 mb-3">
+							<label for="SecondGuarantor">Upload Second Guarantor:</label><br/>
+							<input type="file" id="editSecondGuarantor" name="@Model.SecondGuarantor" required>
+							<p class="text-danger" id="editSecondGuarantorVDT" style="display: none;">Upload Second Guarantor</p>  
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-6 mb-3">
+							<label for="NepaBill">Upload Nepa Bill:</label><br/>
+							<input type="file" id="editNepaBill" name="@Model.NepaBill" required>
+							<p class="text-danger" id="editNepaBillVDT" style="display: none;">Upload Nepa Bill</p>
+						</div>
+						<div class="col-md-6 mb-3">
+							<label for="Contractforms">Upload Contract forms:</label><br/>
+							<input type="file" id="editContractforms" name="@Model.SignedContract" required>
+							<p class="text-danger" id="editContractformsVDT" style="display: none;">Upload Contract forms</p>
+						</div>
+					</div>
+					<div class="col-md-12 mb-3 text-right">
+					<button class="btn newBtn" style="width:10%;" onclick="editApplicantDocumentation('@Model.Id')">Save</button>
+					</div>
+					<!--/ FORM 1 -->
+			</div>
+		</div>
+	</div>
+</div>					
+<!-- /Application page -->

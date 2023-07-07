@@ -11,5 +11,6 @@ namespace Core.Database
         }
         public DbSet<ApplicationUser> ApplicationUser { get; set; }
         public DbSet<UserVerification> UserVerifications { get; set; }
+        public DbSet<ApplicantDocumment> ApplicantDocumments { get; set; }
     }
 }
