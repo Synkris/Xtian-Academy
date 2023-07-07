@@ -318,6 +318,7 @@ function ApplicationRequestMain() {
         }
     }
 }
+// APPLICATION REQUEST ENDS
 
 // LOGIN POST ACTION
 function loginPost() {
@@ -364,6 +365,7 @@ function loginPost() {
         });
     }
 }
+// LOGIN POST ACTION ENDS
 
 
 
@@ -486,6 +488,7 @@ function ApplicantDocumentation() {
         }
     }
 }
+// DOCUMENTATION SUBMISSION ENDS
 
 // CHANGE PASSWORD POST ACTION
 function ChangePasswordPost() {
@@ -522,6 +525,7 @@ function ChangePasswordPost() {
         }
     });
 }
+// CHANGE PASSWORD POST ACTION ENDS
 
 // FORGOT PASSWORD POST ACTION
 function ForgotPasswordReset() {
@@ -556,6 +560,7 @@ function ForgotPasswordReset() {
         errorAlert("Enter your email");
     }
 }
+// FORGOT PASSWORD POST ACTION ENDS
 
 // SET NEW PASSWORD POST ACTION
 function resetPassword() {
@@ -602,6 +607,7 @@ function resetPassword() {
         }
     }
 }
+// SET NEW PASSWORD POST ACTION ENDS
 
 // Admin Registration POST ACTION
 function RegisterAdmin() {
@@ -667,6 +673,7 @@ function RegisterAdmin() {
         }
     }
 }
+// Admin Registration POST ACTION ENDS
 
 function viewApplcantsData(HasCompletedNysc, HasLaptop, HasAnyProgrammingExp, ApplicantResideInEnugu, ProgrammingLanguagesExps, ReasonForProgramming) {
 
@@ -711,3 +718,124 @@ function viewApplcantsData(HasCompletedNysc, HasLaptop, HasAnyProgrammingExp, Ap
     $("#programmingExpList").val(ProgrammingLanguagesExps);
     $("#reasons").val(ReasonForProgramming);
 }
+
+// EDIT APPLICANT DOCUMENTS
+function editApplicantDocumentation(Id) {
+
+    var file = {};
+    file.FirstGuarantor = document.getElementById("editFirstGuarantor").files;
+    file.SecondGuarantor = document.getElementById("editSecondGuarantor").files;
+    file.NepaBill = document.getElementById("editNepaBill").files;
+    file.SignedContract = document.getElementById("editContractforms").files;
+    var BVN = $('#editBVN').val();
+    if (file.FirstGuarantor[0] != null && file.SecondGuarantor[0] != null && file.NepaBill[0] != null && file.SignedContract[0] != null && BVN != null) {
+        $('#loader').show();
+        $('#loader-wrapper').show();
+        if (file.FirstGuarantor[0] != null) {
+            const reader = new FileReader();
+            reader.readAsDataURL(file.FirstGuarantor[0]);
+            var base64FirstGuarantor;
+            reader.onload = function () {
+                base64FirstGuarantor = reader.result;
+
+                if (file.SecondGuarantor[0] != null) {
+                    const reader = new FileReader();
+                    reader.readAsDataURL(file.SecondGuarantor[0]);
+                    var base64SecondGuarantor;
+                    reader.onload = function () {
+                        base64SecondGuarantor = reader.result;
+
+                        if (file.NepaBill[0] != null) {
+                            const reader = new FileReader();
+                            reader.readAsDataURL(file.NepaBill[0]);
+                            var base64NepaBill;
+                            reader.onload = function () {
+                                base64NepaBill = reader.result;
+
+                                if (file.SignedContract[0] != null) {
+                                    const reader = new FileReader();
+                                    reader.readAsDataURL(file.SignedContract[0]);
+                                    var base64Contractforms;
+                                    reader.onload = function () {
+                                        base64Contractforms = reader.result;
+                                        var allDocument = {};
+                                        allDocument.Id = Id;
+                                        allDocument.BVN = BVN;
+                                        allDocument.FirstGuarantor = base64FirstGuarantor;
+                                        allDocument.SecondGuarantor = base64SecondGuarantor;
+                                        allDocument.NepaBill = base64NepaBill;
+                                        allDocument.SignedContract = base64Contractforms;
+
+                                        if (BVN != "" || BVN != 0) {
+                                            let rawData = JSON.stringify(allDocument);
+                                            $.ajax({
+                                                type: 'Post',
+                                                dataType: 'Json',
+                                                url: '/Student/EditApplicantDocuments',
+                                                data:
+                                                {
+                                                    applicantDocuments: rawData,
+                                                },
+                                                success: function (result) {
+
+                                                    if (!result.isError) {
+                                                        $("#loader").fadeOut(3000);
+                                                        successAlert(result.msg)
+                                                        window.location.reload;
+                                                    }
+                                                    else {
+                                                        $("#loader").fadeOut(3000);
+                                                        errorAlert(result.msg)
+                                                    }
+                                                },
+                                                error: function (ex) {
+                                                    $("#loader").fadeOut(3000);
+                                                    errorAlert("Error occured try again");
+                                                }
+                                            })
+                                        }
+                                        else {
+                                            $("#loader").fadeOut(3000);
+                                            errorAlert("Incorrect Details");
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
+
+    }
+    else {
+
+        if (BVN == "") {
+            document.querySelector("#editBVNVDT").style.display = "block";
+        } else {
+            document.querySelector("#editBVNVDT").style.display = "none";
+        }
+        if (file.FirstGuarantor[0] == null) {
+            document.querySelector("#editFirstGuarantorVDT").style.display = "block";
+        } else {
+            document.querySelector("#editFirstGuarantorVDT").style.display = "none";
+        }
+        if (file.SecondGuarantor[0] == null) {
+            document.querySelector("#editSecondGuarantorVDT").style.display = "block";
+        } else {
+            document.querySelector("#editSecondGuarantorVDT").style.display = "none";
+        }
+        if (file.NepaBill[0] == null) {
+            document.querySelector("#editNepaBillVDT").style.display = "block";
+        } else {
+            document.querySelector("#editNepaBillVDT").style.display = "none";
+        }
+        if (file.SignedContract[0] == null) {
+            document.querySelector("#editContractformsVDT").style.display = "block";
+        } else {
+            document.querySelector("#editContractformsVDT").style.display = "none";
+        }
+    }
+}
+// EDIT APPLICANT DOCUMENTS ENDS
