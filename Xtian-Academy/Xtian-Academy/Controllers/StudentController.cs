@@ -81,7 +81,44 @@ namespace Academy_App.Controllers
 
         }
 
+        [HttpGet]
+        public IActionResult EditApplicantDocuments()
+        {
+            var user = User.Identity.Name;
+            var userId = _userHelper.FindByUserNameAsync(user).Result.Id;
+            {
+                var applicantDetail = _userHelper.GetApplicationDocummentByUserId(userId);
+                if (applicantDetail != null)
+                {
+                    return View(applicantDetail);
+                }
+                return View();
+            }
 
-  
+        }
+        [HttpPost]
+        public JsonResult EditApplicantDocuments(string applicantDocuments)
+        {
+            try
+            {
+                var applicantNewDocumentDetails = JsonConvert.DeserializeObject<ApplicantDocumment>(applicantDocuments);
+                if (applicantNewDocumentDetails != null)
+                {
+                    var updateApplicantNewDetails = _studentHelper.UpdateApplicantDocumentsInfo(applicantNewDocumentDetails);
+                    if (updateApplicantNewDetails != null)
+                    {
+                        return Json(new { isError = false, msg = "Documents Edited Successfully." });
+                    }
+                }
+                return Json(new { isError = true, msg = "Something went wrong." });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { isError = true, msg = "An unexpected error occured " + ex.Message });
+            }
+        }
+
+
+
     }
 }

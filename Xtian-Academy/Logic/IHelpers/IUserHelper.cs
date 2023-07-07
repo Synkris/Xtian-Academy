@@ -17,5 +17,6 @@ namespace Logic.IHelpers
         Task<UserVerification> CreateUserToken(string userEmail);
         Task<UserVerification> GetUserToken(Guid token);
         Task<bool> MarkTokenAsUsed(UserVerification userVerification);
+        ApplicantDocumment GetApplicationDocummentByUserId(string userID);
     }
 }

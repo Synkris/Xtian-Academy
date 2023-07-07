@@ -100,6 +100,11 @@ namespace Logic.Helpers
                 throw ex;
             }
         }
+        public ApplicantDocumment GetApplicationDocummentByUserId(string userID)
+        {
+            var myDoc = _context.ApplicantDocumments.Where(s => s.StudentId == userID).FirstOrDefault();
+            return myDoc;
+        }
 
     }
 }
