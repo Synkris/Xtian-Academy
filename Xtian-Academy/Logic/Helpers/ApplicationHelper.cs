@@ -148,6 +148,45 @@ namespace Logic.Helpers
 
         }
 
+        //APPLICATION ACCEPT POST SERVICE
+        public ApplicationUser AcceptSelectedApplication(ApplicationUser applicantIdToAccept)
+        {
+            if (applicantIdToAccept != null)
+            {
+                var applicantsDetails = _userManager.FindByIdAsync(applicantIdToAccept.Id).Result;
+
+                applicantsDetails.Status = ApplicationStatus.Accepted;
+
+                _context.ApplicationUser.Update(applicantsDetails);
+                _context.SaveChanges();
+
+                return applicantsDetails;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        //APPLICATION REJECT POST SERVICE
+        public ApplicationUser RejectSelectedApplication(ApplicationUser applicantIdToReject)
+        {
+            if (applicantIdToReject != null)
+            {
+                var applicantsDetails = _userManager.FindByIdAsync(applicantIdToReject.Id).Result;
+
+                applicantsDetails.Status = ApplicationStatus.Rejected;
+
+                _context.ApplicationUser.Update(applicantsDetails);
+                _context.SaveChanges();
+
+                return applicantsDetails;
+            }
+            else
+            {
+                return null;
+            }
+        }
 
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Core.Database;
+using Core.Enum;
 using Core.Models;
 using Logic.IHelpers;
 using Microsoft.AspNetCore.Identity;
@@ -38,10 +39,10 @@ namespace Logic.Helpers
         {
             return await _userManager.Users.Where(s => s.Email == email)?.FirstOrDefaultAsync();
         }
-        //public async Task<ApplicationUser> FindByIdAsync(string Id)
-        //{
-        //    return await _userManager.Users.Where(s => s.Id == Id)?.FirstOrDefaultAsync();
-        //}
+        public async Task<ApplicationUser> FindByIdAsync(string Id)
+        {
+            return await _userManager.Users.Where(s => s.Id == Id)?.FirstOrDefaultAsync();
+        }
 
         public async Task<UserVerification> CreateUserToken(string userEmail)
         {
@@ -104,6 +105,84 @@ namespace Logic.Helpers
         {
             var myDoc = _context.ApplicantDocumments.Where(s => s.StudentId == userID).FirstOrDefault();
             return myDoc;
+        }
+        public List<int> GetListOfCourseIdStudentPaid4(string userID)
+        {
+            var getListOfCourseStudentPaidFor = _context.Payments.Where(t => t.UserId == userID && t.Status == PaymentStatus.Approved).ToList();
+            var paidCourseIDs = getListOfCourseStudentPaidFor.Select(x => x.CourseId).ToList();
+            if (paidCourseIDs.Any())
+            {
+                return paidCourseIDs;
+            }
+            return null;
+        }
+        public TrainingVideos GetVideosById(Guid Id)
+        {
+            var videos = _context.TrainingVideos.Where(t => t.Id == Id && t.IsActive).FirstOrDefault();
+            if (videos != null)
+            {
+                return videos;
+            }
+            return videos;
+        }
+
+        public List<ApplicationUser> GetAllOnboardApplicantsFromDB()
+        {
+            var allApplicants = _context.ApplicationUser.Where(b => b.Deactivated == false && b.IsAdmin == false).OrderByDescending(d => d.DateRegistered).ToList();
+            if (allApplicants.Any())
+            {
+                return allApplicants;
+            }
+            return allApplicants;
+        }
+
+        public List<Payments> GetPaymentList()
+        {
+            var allPayments = _context.Payments.Include(p => p.Student).Include(p => p.Courses).OrderByDescending(d => d.Date).ToList();
+            if (allPayments.Any())
+            {
+                return allPayments;
+            }
+            return allPayments;
+        }
+
+        public Payments GetPaymentById(int? Id)
+        {
+            var payment = _context.Payments.Where(t => t.Id == Id).Include(c => c.Courses).Include(s => s.Student).FirstOrDefault();
+            if (payment != null)
+            {
+                return payment;
+            }
+            return payment;
+        }
+
+        public List<TrainingCourse> GetAllTrainingCourseFromDB()
+        {
+            var allTrainingCourse = _context.TrainingCourse.Where(t => !t.IsDeleted).ToList();
+            if (allTrainingCourse.Any())
+            {
+                return allTrainingCourse;
+            }
+            return allTrainingCourse;
+        }
+
+        public TrainingCourse GetTrainingCourseById(int? Id)
+        {
+            var allTrainingCourse = _context.TrainingCourse.Where(t => t.Id == Id).FirstOrDefault();
+            if (allTrainingCourse != null)
+            {
+                return allTrainingCourse;
+            }
+            return allTrainingCourse;
+        }
+        public List<TrainingVideos> GetTrainingVideos()
+        {
+            var allVideos = _context.TrainingVideos.Where(v => v.IsActive).Include(c => c.Name).ToList();
+            if (allVideos.Any())
+            {
+                return allVideos;
+            }
+            return allVideos;
         }
 
     }

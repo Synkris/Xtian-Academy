@@ -839,3 +839,218 @@ function editApplicantDocumentation(Id) {
     }
 }
 // EDIT APPLICANT DOCUMENTS ENDS
+
+// GET TRAINING COST FOR EDIT
+function GetTrainingCourseById(Id) {
+
+    $.ajax({
+        type: 'GET',
+        url: '/Admin/GetTrainingCourseById', // we are calling json method
+        data: { Id: Id },
+        dataType: 'json',
+        success: function (data) {
+
+            if (!data.isError) {
+                $("#Delete_Id").val(data.id);
+                $("#Edit_Id").val(data.id);
+                $("#Edit_Title").val(data.title);
+                $("#Edit_Description").val(data.description);
+                $("#Edit_Cost").val(data.amount);
+                $("#Edit_Duration").val(data.duration);
+                $("#Edit_TestDuration").val(data.testDuration);
+                $("#Edit_Logo").val(data.logo);
+            }
+        }
+    });
+}
+// GET TRAINING COST FOR EDIT ENDS
+
+// APPLICATION REQUEST 
+function TrainingCoursePost(action, id) {
+
+    $('#loader').show();
+    $('#loader-wrapper').show();
+    var actionType = action;
+    if (actionType == 'CreateTrainingCourse') {
+
+        var logo = document.getElementById("Logo").files;
+
+        if (logo[0] != null) {
+            const reader = new FileReader();
+            reader.readAsDataURL(logo[0]);
+
+            reader.onload = function () {
+                var data = {};
+                data.Title = $('#Title').val();
+                data.Description = $('#Description').val();
+                data.Amount = $('#Cost').val();
+                data.Duration = $('#Duration').val();
+                data.TestDuration = $('#TestDuration').val();
+                data.Logo = reader.result;
+                data.ActionType = actionType;
+
+                let collectedTrainingData = JSON.stringify(data);
+                $.ajax({
+                    type: 'Post',
+                    dataType: 'json',
+                    url: '/Admin/TrainingCoursePost',
+                    data:
+                    {
+                        collectedTrainingData: collectedTrainingData,
+                    },
+                    success: function (result) {
+
+                        if (!result.isError) {
+
+                            $("#loader").fadeOut(3000);
+                            var url = '/Admin/TrainingCourse';
+                            successAlertWithRedirect(result.msg, url)
+                        }
+                        else {
+                            $("#loader").fadeOut(3000);
+                            errorAlert(result.msg)
+                        }
+                    },
+                    error: function (ex) {
+                        $("#loader").fadeOut(3000);
+                        errorAlert("Error occured try again");
+                    }
+                });
+            }
+        }
+    }
+    else if (actionType == 'EditTrainingCourse') {
+
+        var logo = document.getElementById("Edit_Logo").files;
+
+        if (logo[0] != null) {
+            const reader = new FileReader();
+            reader.readAsDataURL(logo[0]);
+
+            reader.onload = function () {
+                var data = {};
+                data.Id = $('#Edit_Id').val();
+                data.Title = $('#Edit_Title').val();
+                data.Description = $('#Edit_Description').val();
+                data.Amount = $('#Edit_Cost').val();
+                data.Duration = $('#Edit_Duration').val();
+                data.TestDuration = $('#Edit_TestDuration').val();
+                data.Logo = reader.result;
+                data.ActionType = actionType;
+
+                let collectedTrainingData = JSON.stringify(data);
+                $.ajax({
+                    type: 'Post',
+                    dataType: 'json',
+                    url: '/Admin/TrainingCoursePost',
+                    data:
+                    {
+                        collectedTrainingData: collectedTrainingData,
+                    },
+                    success: function (result) {
+
+                        if (!result.isError) {
+                            $("#loader").fadeOut(3000);
+                            var url = '/Admin/TrainingCourse';
+                            successAlertWithRedirect(result.msg, url)
+                        }
+                        else {
+                            $("#loader").fadeOut(3000);
+                            errorAlert(result.msg)
+                        }
+                    },
+                    error: function (ex) {
+                        $("#loader").fadeOut(3000);
+                        errorAlert("Error occured try again");
+                    }
+                });
+            }
+        }
+    }
+    else if (actionType == 'DeactivateTrainingCourse' || actionType == 'ActivateTrainingCourse') {
+
+        var data = {};
+        data.Id = id;
+        data.ActionType = action;
+
+        let collectedTrainingData = JSON.stringify(data);
+        $.ajax({
+            type: 'Post',
+            dataType: 'json',
+            url: '/Admin/TrainingCoursePost',
+            data:
+            {
+                collectedTrainingData: collectedTrainingData,
+            },
+            success: function (result) {
+
+                if (!result.isError) {
+                    $("#loader").fadeOut(3000);
+                    var url = '/Admin/TrainingCourse';
+                    successAlertWithRedirect(result.msg, url)
+                }
+                else {
+                    $("#loader").fadeOut(3000);
+                    errorAlert(result.msg)
+                }
+            },
+            error: function (ex) {
+                $("#loader").fadeOut(3000);
+                errorAlert("Error occured try again");
+            }
+        });
+    }
+    else if (actionType == 'DeleteTrainingCourse') {
+
+        var data = {};
+        data.Id = $('#Delete_Id').val();
+        data.ActionType = action;
+
+        let collectedTrainingData = JSON.stringify(data);
+        $.ajax({
+            type: 'Post',
+            dataType: 'json',
+            url: '/Admin/TrainingCoursePost',
+            data:
+            {
+                collectedTrainingData: collectedTrainingData,
+            },
+            success: function (result) {
+
+                if (!result.isError) {
+                    $("#loader").fadeOut(3000);
+                    var url = '/Admin/TrainingCourse';
+                    successAlertWithRedirect(result.msg, url)
+                }
+                else {
+                    $("#loader").fadeOut(3000);
+                    errorAlert(result.msg)
+                }
+            },
+            error: function (ex) {
+                $("#loader").fadeOut(3000);
+                errorAlert("Error occured try again");
+            }
+        });
+    }
+}
+// APPLICATION REQUEST ENDS
+
+// GET PAYMENT BY ID
+function GetPaymentById(Id) {
+
+    $.ajax({
+        type: 'GET',
+        url: '/Admin/GetPaymentById', // we are calling json method
+        data: { Id: Id },
+        dataType: 'json',
+        success: function (data) {
+
+            if (!data.isError) {
+                $("#approvedId").val(data.id);
+                $("#declineId").val(data.id);
+            }
+        }
+    });
+}
+// GET PAYMENT BY ID ENDS

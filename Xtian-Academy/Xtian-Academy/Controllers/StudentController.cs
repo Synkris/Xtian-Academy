@@ -118,6 +118,40 @@ namespace Academy_App.Controllers
             }
         }
 
+        //GET || Students course List
+        [HttpGet]
+        public IActionResult StudentCourses()
+        {
+            var userId = _userHelper.FindByUserNameAsync(User.Identity.Name).Result?.Id;
+            if (userId != null)
+            {
+                ViewBag.PaidCourseIdList = _userHelper.GetListOfCourseIdStudentPaid4(userId);
+            }
+            var allCourses = _studentHelper.GetAllTrainingCourseDB();
+            if (allCourses != null)
+            {
+                return View(allCourses);
+            }
+            return View();
+        }
+        [HttpGet]
+        public JsonResult GetCourseOutLineById(Guid id)
+        {
+            try
+            {
+                if (id != Guid.Empty)
+                {
+                    var courseOutLine = _userHelper.GetVideosById(id).Outline;
+                    return Json(courseOutLine);
+                }
+                return Json(new { isError = true, msg = "Failed" });
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new { isError = true, msg = "An unexpected error occured " + ex.Message });
+            }
+        }
 
 
     }

@@ -16,7 +16,8 @@ namespace Logic.IHelpers
         Task PasswordResetedTemplateEmailerAsync(ApplicationUser userEmail, string linkToClick);
         void ForgotPasswordTemplateEmailer(ApplicationUser userEmail, string linkToClick);
         bool Gratitude(string applicantEmail);
-
+        bool SendPaymentAprovalMsg(ApplicationUser userDetail, string course);
+        bool SendPaymentDeclineMsg(ApplicationUser userDetail, string course);
 
 
 

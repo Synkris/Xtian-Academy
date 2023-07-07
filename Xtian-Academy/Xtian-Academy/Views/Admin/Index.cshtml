@@ -1,0 +1,215 @@
+﻿@using Core.Enum
+@model Core.ViewModels.AdminDashBoardViewModel
+@{
+    ViewData["Title"] = "Index";
+	Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h1>Welcome <span id="loggedInAdmin"></span></h1>
+<div class="row">
+	<div class="col-md-6 col-sm-6 col-lg-6 col-xl-4">
+		<div class="card dash-widget">
+			<div class="card-body">
+				<span class="dash-widget-icon"><i class="fa fa-cubes"></i></span>
+				<div class="dash-widget-info">
+					<h3>@Model.TotalActiveStudents</h3>
+					<span>Active Student</span>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-6 col-sm-6 col-lg-6 col-xl-4">
+		<div class="card dash-widget">
+			<div class="card-body">
+				<span class="dash-widget-icon"><i class="fa fa-usd"></i></span>
+				<div class="dash-widget-info">
+					<h3>@Model.TotalNumberOfStudentsProjects</h3>
+					<span>Student Projects</span>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-6 col-sm-6 col-lg-6 col-xl-4">
+		<div class="card dash-widget">
+			<div class="card-body">
+				<span class="dash-widget-icon"><i class="fa fa-user"></i></span>
+				<div class="dash-widget-info">
+					<h3>@Model.TotalNumberOfJobApplications</h3>
+					<span>Active Jobs Applications</span>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<div class="row">
+	<div class="col-md-12 d-flex">
+		<div class="card card-table flex-fill">
+			<div class="card-header">
+				<h3 class="card-title mb-0">Onboard Student Registrations</h3>
+			</div>
+			<div class="card-body">
+				<div class="table-responsive">
+					<table class="table custom-table mb-0">
+						<thead>
+							<tr>
+								<th>Name</th>
+								<th>Email</th>
+								<th>Phone Number</th>
+								<th>Lives in Enugu</th>
+								<th>Download CV</th>
+								<th>Status</th>
+							</tr>
+						</thead>
+						<tbody>
+							@if (Model.OnboardStudentsList.Count() > 0 && Model.OnboardStudentsList != null)
+							{
+								foreach (var student in Model.OnboardStudentsList)
+								{
+									<tr>
+										<td>
+										<h2 class="table-avatar">
+											<a href="" class="avatar"><img alt="" src="assets/img/profiles/avatar-19.jpg"></a>
+											<a href="">@student.FullName<span>@student.UserName</span></a>
+										</h2>
+									</td>
+									<td>@student.Email</td>
+									<td>@student.PhoneNumber</td>
+									<td>@student.ApplicantResideInEnugu</td>
+									<td class="text-center"><a href="@student.CV" class="btn newBtn download-offer" download><span><i class="fa fa-download fafaColor mr-1"></i> Download CV</span></a></td>
+									@if (student.Status == ApplicationStatus.Accepted)
+									{
+										<td class="text-success">@student.Status</td>
+									}
+									else if (student.Status == ApplicationStatus.Rejected)
+									{
+
+										<td class="text-danger">@student.Status</td>
+									}
+									else
+									{
+
+										<td>@student.Status</td>
+									}
+								</tr>
+								}
+							}
+							else
+							{
+								<div cclass="row p5 m-5">
+									<div class="col-md-12 text-center p-5 m5">
+										<h2>No Record Found</h2>
+									</div>
+								</div>
+							}
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="card-footer">
+				<a asp-action="OnboardingStudent" asp-controller="Admin">View all Onboard students</a>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-6 d-flex">
+		<div class="card card-table flex-fill">
+			<div class="card-header">
+				<h3 class="card-title mb-0">Recent Payments</h3>
+			</div>
+			<div class="card-body">
+				<div class="table-responsive">
+					<table class="table table-nowrap custom-table mb-0">
+						<thead>
+							<tr>
+								<th>Invoice No.</th>
+								<th>Student</th>
+								<th>Course</th>
+								<th>Amout</th>
+								<th>Status</th>
+							</tr>
+						</thead>
+						<tbody>
+							@if (Model.PaymentHistoryList.Count() > 0 && Model.PaymentHistoryList != null)
+							{
+								foreach (var payment in Model.PaymentHistoryList)
+								{
+									<tr>
+										<td>@payment.InvoiceNumber</td>
+										<td>@payment.Student.FullName</td>
+										<td>@payment.Courses.Title</td>
+										<td>@String.Format("{0:n0}", payment.Courses.Amount)</td>
+										<td>@payment.Status</td>
+									</tr>
+								}
+							}
+							else
+							{
+							<div cclass="row p5 m-5">
+								<div class="col-md-12 text-center p-5 m5">
+									<h2>No Record Found</h2>
+								</div>
+							</div>
+							}
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="card-footer">
+				<a asp-action="Payments" asp-controller="Admin">View all payment</a>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-6 d-flex">
+		<div class="card card-table flex-fill">
+			<div class="card-header">
+				<h3 class="card-title mb-0">Recent Projects</h3>
+			</div>
+			<div class="card-body">
+				<div class="table-responsive">
+					<table class="table custom-table mb-0">
+						<thead>
+							<tr>
+								<th>Project Details</th>
+								<th>Status</th>
+								<th class="text-right"></th>
+							</tr>
+						</thead>
+						<tbody>
+							@if (Model.ApprovedProjectList.Count() > 0 && Model.ApprovedProjectList != null)
+							{
+								foreach (var projects in Model.ApprovedProjectList)
+								{
+									<tr>
+										<td>
+											<h2><a href="">@projects.Title</a></h2>
+											<small class="block text-ellipsis">
+												<span><b>Course : </b></span> <span class="text-muted">@projects.Course.Title </span>
+												<span><b>by : </b></span> <span class="text-muted">@projects.Student.FullName</span>
+											</small>
+										</td>
+										<td class="text-success">@projects.Status</td>
+									</tr>
+								}
+							}
+							else
+							{
+								<div cclass="row p5 m-5">
+									<div class="col-md-12 text-center p-5 m5">
+										<h2>No Record Found</h2>
+									</div>
+								</div>
+							}
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="card-footer">
+				<a asp-action="AprovedTopics" asp-controller="Admin">View all projects</a>
+			</div>
+		</div>
+	</div>
+</div>
