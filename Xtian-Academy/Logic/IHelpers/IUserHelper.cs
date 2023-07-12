@@ -26,5 +26,6 @@ namespace Logic.IHelpers
         List<TrainingCourse> GetAllTrainingCourseFromDB();
         TrainingCourse GetTrainingCourseById(int? Id);
         List<TrainingVideos> GetTrainingVideos();
+        ProjectTopic GetProjectTopicById(int? id);
     }
 }

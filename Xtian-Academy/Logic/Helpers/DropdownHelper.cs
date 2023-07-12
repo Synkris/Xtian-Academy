@@ -2,6 +2,7 @@
 using Core.Enum;
 using Core.Models;
 using Logic.IHelpers;
+using Microsoft.EntityFrameworkCore;
 
 namespace Logic.Helpers
 {
@@ -44,5 +45,33 @@ namespace Logic.Helpers
                 throw exp;
             }
         }
+        public List<DropDown> DropdownOfCoursesWhereIsTested(string userName)
+        {
+            try
+            {
+                var common = new DropDown()
+                {
+                    Id = 0,
+                    Name = "Select Course"
+                };
+                var user = _context.Users.Where(u => u.UserName == userName).FirstOrDefault();
+                var listOfTestTaken = _context.TestResults.Where(x => x.UserId == user.Id).Include(x => x.Course).ToList();
+                var drp = listOfTestTaken.Select(x => new DropDown
+                {
+                    Id = x.Course.Id,
+                    Name = x.Course.Title,
+                }).ToList();
+
+
+                drp.Insert(0, common);
+                return drp;
+            }
+            catch (Exception exp)
+            {
+                throw exp;
+            }
+        }
+
+
     }
 }
