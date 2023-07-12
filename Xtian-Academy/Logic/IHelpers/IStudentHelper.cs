@@ -21,6 +21,12 @@ namespace Logic.IHelpers
         List<ProjectTopic> GetListOfStutentsApprovedProjectTopic(string userId);
         ProjectTopic ProjectLinksUpdateServices(ProjectTopicViewModel topics);
         ProjectTopic GetProjectLinksServices(int id);
+        bool CheckIfUserIsQualifiedToApplyForJobs(string userId);
+        List<int> GetListOfJobIdsUserHaveAppliedFor(string userID);
+        bool CheckIfUserHaveAppliedForThisJob(List<int> getListJobId, int id);
+        List<JobViewModels> GetListOfAvailableJobsByJobType(string userID, JobType? id);
+        List<JobViewModels> GetListOfAvailableJobs(string userID);
+        Task<JobApplication> JobApplicationServices(int jobId, ApplicationUser user);
 
 
     }

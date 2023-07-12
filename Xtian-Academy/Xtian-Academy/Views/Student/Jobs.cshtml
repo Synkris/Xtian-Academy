@@ -1,0 +1,168 @@
+﻿@using Core.Enum
+@model Core.ViewModels.JobViewModels
+@{
+	ViewData["Title"] = "Jobs";
+	Layout = "~/Views/Shared/_StudentLayout.cshtml";
+}
+
+@if(Model.IsProjectCompleted)
+{
+	<!-- Page Header -->
+	<div class="page-header">
+		<div class="row">
+			<div class="col-sm-12">
+				@if(Model.Message){
+					<div class="alert alert-info alert-dismissible fade show" role="alert">
+						<strong>Oops!</strong> No record found.
+						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+							<span aria-hidden="true">×</span>
+						</button>
+				</div>
+				}
+			</div>
+		</div>
+	</div>
+	<!-- /Page Header -->
+					
+	<!-- Search Filter -->
+	<div class="row filter-row">
+		<div class="col-sm-6 col-md-6 mt-1 mb-4">
+			<h3 class="page-title">Available Jobs</h3>
+		</div>
+		<div class="col-sm-3 col-md-3 mt-1 mb-4">
+			<select class="select" id="jobSearch" onchange="MapJoyTypeIdForSearch()" asp-items="@(new SelectList(@ViewBag.JobTypes,  "Id", "Name" ))"></select>
+		</div>
+		<div class="col-sm-3 col-md-3 mb-4">  
+			<a href="/Student/Jobs" id="searchLink" class="btn newSearchBtn btn-block"> Search </a>
+
+		</div>
+	</div>
+	<!-- Search Filter -->
+
+	<div class="row staff-grid-row">
+		@if (Model.JobModel.Count() > 0 && Model != null)
+		{
+			@foreach (var job in Model.JobModel)
+			{
+				<div class="col-md-6 col-sm-12 col-12 col-lg-6 col-xl-6">
+					<div class="profile-widget">
+						<div class="dropdown profile-action">
+							<a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+							<div class="dropdown-menu dropdown-menu-right">
+								<a class="dropdown-item" href="#" data-toggle="modal" data-target="#viewDetail" onclick="ApplicantsGetJobById('@job.Id')"><i class="fa fa-eye m-r-5"></i> View Details</a>
+								@if(job.Applied)
+								{
+									<a class="dropdown-item" href="#" data-toggle="modal" data-target="#apply_job" onclick="JobAplicationSubmittion('APPLIED','@job.Id')"><i class="fa fa-calendar-plus-o m-r-5"></i> Apply Now</a>
+								}
+								else
+								{
+									<a class="dropdown-item" href="#" data-toggle="modal" data-target="#apply_job" onclick="JobAplicationSubmittion('NOTAPPLIED','@job.Id')"><i class="fa fa-calendar-plus-o m-r-5"></i> Apply Now</a>
+								}
+							</div>
+						</div>
+						<h2 class="user-name m-t-10 mb-0 text-left text-ellipsis"><a href="#"><b>@job.Title</b></a></h2>
+						<h3 class="user-name m-t-10 mb-0 text-left text-ellipsis"><a href="#">@job.CompanyName</a></h3>
+						<div class="d-flex flex-row">
+							<div class="p-2 my-2 mr-2 alert alert-dark show text-dark"><i class="la la-money"></i> ₦@String.Format("{0:n0}", job.Salary) a month</div>
+							@if (job.Type == JobType.Full_Time_Premise)
+							{
+								<div class="p-2 my-2 alert alert-success show text-dark"><i class="la la-briefcase"></i> Full-time (On Premise) <i class="la la-check"></i></div>
+							}
+							else if (job.Type == JobType.Part_Time_Premise)
+							{
+								<div class="p-2 my-2 alert alert-success show text-dark"><i class="la la-briefcase"></i> Part-time (On Premise) <i class="la la-check"></i></div>
+							}
+							else if (job.Type == JobType.Full_Time_Home)
+							{
+								<div class="p-2 my-2 alert alert-success show text-dark"><i class="la la-briefcase"></i> Full-time (Work from Home) <i class="la la-check"></i></div>
+							}
+							else
+							{
+								<div class="p-2 my-2 alert alert-success show text-dark"><i class="la la-briefcase"></i> Part-time (work from Home) <i class="la la-check"></i></div>
+							}
+						</div>
+						<h4 class="my-3 text-left text-ellipsis"><i class="fa fa-arrow-circle-o-right" style="font-size:24px;color:darkblue"></i> Easily apply</h4>
+
+						<ul style="padding-left: 25px;">
+							@foreach (var first3Desc in job.DescriptionList)
+							{
+								<li class="text-left text-ellipsis py-1"><i class="fa fa-dot-circle-o mr-2" aria-hidden="true"></i>@first3Desc</li>
+							}
+						</ul>
+
+						<p class="user-name m-t-10 mb-0 text-muted text-left text-ellipsis"><a href="#">Posted on @job.DateCreated</a></p>
+						<div class="d-flex flex-row-reverse mt-2">
+							<div class="p-2 btn newBtn" data-toggle="modal" data-target="#viewDetail" onclick="ApplicantsGetJobById('@job.Id')"><i class="fa fa-eye m-r-5"></i> View Details</div>
+							@if (job.Applied)
+							{
+								<div class="p-2 btn newBtn mr-2" data-toggle="modal" data-target="#apply_job" onclick="JobAplicationSubmittion('APPLIED','@job.Id')"><i class="fa fa-calendar-plus-o m-r-5"></i> Apply</div>
+							}
+							else
+							{
+								<div class="p-2 btn newBtn mr-2" data-toggle="modal" data-target="#apply_job" onclick="JobAplicationSubmittion('NOTAPPLIED','@job.Id')"><i class="fa fa-calendar-plus-o m-r-5"></i> Apply</div>
+							}
+						</div>
+					</div>
+				</div>
+			}
+		}
+		else
+		{
+			<div cclass="row p5 m-5">
+				<div class="col-md-12 text-center p-5 m5">
+					<h2>No Record Found</h2>
+				</div>
+			</div>
+		}
+	</div>
+	<!-- View Job details Modal -->
+	<div class="modal custom-modal fade" id="viewDetail" role="dialog">
+		<div class="modal-dialog modal-dialog-centered  modal-lg" role="document">
+			<div class="modal-content">
+				<button type="button" class="close" data-dismiss="modal"><i class="fa fa-close"></i></button>
+				<div class="modal-body">
+					<h3 class="modal-title text-center mb-3">Job Details</h3>
+					<div class="row">
+						<div class="col-md-12 py-2">
+							<div class="form-group">
+								<h4 class="pt-1" id="companyName"></h4>
+								<h4 class="pt-1" id="title"></h4>
+								<h4 class="pt-1" id="salary"></h4>
+								<h4 class="pt-1" id="type"></h4>
+							</div>
+						</div>
+						<div class="col-md-12">
+							<div class="form-group">
+								<h4>Job Description</h4>
+								<div class="p-2" id="jobDescriptionView"></div>
+							</div>
+						</div>
+						<div class="col-md-12">
+							<div class="form-group">
+								<h4>Job Responsibilities</h4>
+								<div class="p-2" id="jobResponsibilitiesView"></div>
+							</div>
+						</div>
+						<div class="col-md-12">
+							<div class="form-group">
+								<h4>Job Requirements</h4>
+								<div class="p-2" id="jobRequirementsView"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /View Job details Modal -->
+}
+else{
+	<div class="main-wrapper">
+		<div class="error-box">
+			<h1>403</h1>
+			<h3><i class="fa fa-warning"></i> Oops! Access Denied</h3>
+			<p>Sorry!! you need to complete your course before you can have access to this Page.</p>
+			<a href="javascript:history.back()" class="btn btn-custom">Back to Home</a>
+		</div>
+	</div>
+}

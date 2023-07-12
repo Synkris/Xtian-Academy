@@ -191,5 +191,23 @@ namespace Logic.Helpers
             return topic;
         }
 
+        public List<string> SplitStringToList(string dataString)
+        {
+            if (dataString != null)
+            {
+                return dataString.Split("\n").Take(3).ToList();
+            }
+            return new List<string>();
+        }
+
+        public Job GetJobById(int? Id)
+        {
+            var job = _context.Jobs.Where(t => t.Id == Id).FirstOrDefault();
+            if (job != null)
+            {
+                return job;
+            }
+            return job;
+        }
     }
 }

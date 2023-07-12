@@ -1,0 +1,288 @@
+﻿@using Core.Enum
+@model IEnumerable<Core.Models.Job>
+@{
+	ViewData["Title"] = "Employees Page";
+	Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<style>
+
+	body {
+		counter-reset: Serial; /* / Set the Serial counter to 0 /*/
+	}
+
+	tr td:first-child:before  {
+		counter-increment: Serial; /* / Increment the Serial counter /*/
+		content: counter(Serial); /*  / Display the counter /*/
+	}
+</style>
+
+	<!-- Page Content -->
+    <div class="content container-fluid p-0 m-0">
+				
+		<!-- Page Header -->
+		<div class="page-header">
+			<div class="row align-items-center">
+				<div class="col">
+					<h3 class="page-title">Job Management</h3>
+				</div>
+				<div class="col-auto float-right ml-auto">
+					<a href="#" class="btn add-btn" data-toggle="modal" data-target="#add_job"><i class="fa fa-plus"></i> Add Job</a>
+				</div>
+			</div>
+		</div>
+		<!-- /Page Header -->
+
+
+	@if(Model != null && Model.Count() > 0){
+		<div class="row">
+			<div class="col-md-12">
+				<div class="table-responsive">
+					<table class="table table-striped custom-table datatable">
+						<thead>
+							<tr>
+								<th>S/N</th>
+								<th>Company Name</th>
+								<th>Title</th>
+								<th>Salary</th>
+								<th>Type</th>
+								<th>Details</th>
+								<th class="text-right no-sort">Action</th>
+							</tr>
+						</thead>
+						@foreach (var job in Model)
+					{
+						<tbody>
+							<tr>
+								<td></td>
+								<td>@job.CompanyName</td>
+								<td>@job.Title</td>
+								<td>@job.Salary</td>
+								@if (job.Type == JobType.Full_Time_Premise)
+								{
+									<td>Full-time (On Premise)</td>
+								}
+								else if (job.Type == JobType.Part_Time_Premise)
+								{
+									<td>Part-time (On Premise)</td>
+								}
+								else if (job.Type == JobType.Full_Time_Home)
+								{
+									<td>Full-time (Work from Home)</td>
+								}
+								else
+								{
+									<td>Part-time (work from Home)</td>
+								}
+									
+									<td><a class="btn newBtn" href="#" data-toggle="modal" data-target="#viewDetail" onclick="GetJobById('@job.Id')">View Details</a></td>
+								<td class="text-right">
+									<div class="dropdown dropdown-action">
+										<a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+										<div class="dropdown-menu dropdown-menu-right">
+												<a class="dropdown-item text-center" href="#" data-toggle="modal" data-target="#edit_job" style="font-size:25px;color:blue" onclick="GetJobById('@job.Id')"><i class="fa fa-edit"></i></a>
+											@if (@job.IsActive)
+											{
+												<a class="dropdown-item text-center" href="#"><i class="fa fa-toggle-on" style="font-size:25px;color:green" onclick="ActivateAndDeactiveJob('DEACTIVATE', '@job.Id')"></i></a>
+											}
+											else{
+													<a class="dropdown-item text-center" href="#"><i class="fa fa-toggle-off" style="font-size:25px;color:red" onclick="ActivateAndDeactiveJob('ACTIVATE', '@job.Id')"></i></a>
+											}
+										</div>
+									</div>
+								</td>
+							</tr>
+						</tbody>
+					}
+					</table>
+				</div>
+			</div>
+		</div>
+	}
+	else
+	{
+		<div cclass="row p5 m-5">
+			<div class="col-md-12 text-center p-5 m5">
+				<h2>No Record Found</h2>
+			</div>
+		</div>
+	}
+    </div>
+	<!-- /Page Content -->
+				
+	<!-- Add Job Modal -->
+	<div id="add_job" class="modal custom-modal fade" role="dialog">
+		<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Add Job</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div class="row">
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label class="col-form-label">Company Name <span class="text-danger">*</span></label>
+								<input class="form-control" type="text" id="companyName" required>
+								<p class="text-danger" id="companyNameVDT" style="display: none;">Enter Company Name</p>
+							</div>
+						</div>
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label class="col-form-label">Title <span class="text-danger">*</span></label>
+								<input class="form-control" type="text" id="title" required>
+								<p class="text-danger" id="titleVDT" style="display: none;">Enter Job Title</p>
+							</div>
+						</div>
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label class="col-form-label">Salary<span class="text-danger">*</span></label>
+								<input class="form-control" type="number" id="salary" required>
+								<p class="text-danger" id="salaryVDT" style="display: none;">Enter Salary</p>
+							</div>
+						</div>								
+						<div class="col-md-6">
+							<div class="form-group">
+								<label class="col-form-label">Type <span class="text-danger">*</span></label>
+								<select class="select" id="type" required asp-items="@(new SelectList(@ViewBag.JobTypes,  "Id", "Name" ))"></select>
+								<p class="text-danger" id="typeVDT" style="display: none;">Select Job Type</p>
+							</div>
+						</div>
+						<div class="col-sm-12">
+							<div class="form-group">
+								<label class="col-form-label">Description<span class="text-danger">*</span></label>
+								<textarea rows="3" class="form-control summernote" id="description" placeholder="Enter Job Description"></textarea>
+								<p class="text-danger" id="descriptionVDT" style="display: none;">Enter Job Description</p>
+							</div>
+						</div>
+						<div class="col-sm-12">
+							<div class="form-group">
+								<label class="col-form-label">Responsibilities<span class="text-danger">*</span></label>
+								<textarea rows="3" class="form-control summernote" id="responsibilities" placeholder="Enter Job Responsibilities"></textarea>
+								<p class="text-danger" id="responsibilitiesVDT" style="display: none;">Enter Job Responsibilities</p>
+							</div>
+						</div>
+						<div class="col-sm-12">
+							<div class="form-group">
+								<label class="col-form-label">Requirements<span class="text-danger">*</span></label>
+							<textarea rows="3" class="form-control summernote" id="requirements" placeholder="Enter Job Responsibilities"></textarea>
+								<p class="text-danger" id="requirementsVDT" style="display: none;">Enter Job Responsibilities</p>
+							</div>
+						</div>
+					</div>
+					<div class="submit-section">
+					<button class="btn newBtn" type="submit" onclick="JobCreatePost('CREATE')">Submit</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /Add Job Modal -->
+				
+<!-- Edit Job Modal -->
+<div id="edit_job" class="modal custom-modal fade" role="dialog">
+	<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Edit Job</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-sm-6">
+							<div class="form-group">
+								<label class="col-form-label">Company Name <span class="text-danger">*</span></label>
+								<input type="number" id="edit_Id" hidden>
+								<input class="form-control" type="text" id="edit_companyName" required>
+								<p class="text-danger" id="edit_companyNameVDT" style="display: none;">Enter Company Name</p>
+							</div>
+						</div>
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label class="col-form-label">Title <span class="text-danger">*</span></label>
+								<input class="form-control" type="text" id="edit_title" required>
+								<p class="text-danger" id="edit_titleVDT" style="display: none;">Enter Job Title</p>
+							</div>
+						</div>
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label class="col-form-label">Salary<span class="text-danger">*</span></label>
+								<input class="form-control" type="number" id="edit_salary" required>
+								<p class="text-danger" id="edit_salaryVDT" style="display: none;">Enter Salary</p>
+							</div>
+						</div>								
+						<div class="col-md-6">
+							<div class="form-group">
+								<label class="col-form-label">Type <span class="text-danger">*</span></label>
+								<select class="select" id="edit_type" asp-items="@(new SelectList(@ViewBag.JobTypes,  "Id", "Name" ))"></select>
+								<p class="text-danger" id="edit_typeVDT" style="display: none;">Select Job Type</p>
+							</div>
+						</div>
+						<div class="col-sm-12">
+							<div class="form-group">
+								<label class="col-form-label">Description<span class="text-danger">*</span></label>
+								<textarea rows="3" class="form-control summernote" id="edit_description" placeholder="Enter Job Description"></textarea>
+								<p class="text-danger" id="edit_descriptionVDT" style="display: none;">Enter Job Description</p>
+							</div>
+						</div>
+						<div class="col-sm-12">
+							<div class="form-group">
+								<label class="col-form-label">Responsibilities<span class="text-danger">*</span></label>
+								<textarea rows="3" class="form-control summernote" id="edit_responsibilities" placeholder="Enter Job Responsibilities"></textarea>
+								<p class="text-danger" id="edit_responsibilitiesVDT" style="display: none;">Enter Job Responsibilities</p>
+							</div>
+						</div>
+						<div class="col-sm-12">
+							<div class="form-group">
+								<label class="col-form-label">Requirements<span class="text-danger">*</span></label>
+								<textarea rows="3" class="form-control summernote" id="edit_requirements" placeholder="Enter Job Responsibilities"></textarea>
+								<p class="text-danger" id="edit_requirementsVDT" style="display: none;">Enter Job Responsibilities</p>
+							</div>
+						</div>
+				</div>
+				<div class="submit-section">
+					<button class="btn newBtn" type="submit" onclick="JobEditPost('EDIT')">Submit</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- /Edit Job Modal -->
+
+<!-- View Job details Modal -->
+<div class="modal custom-modal fade" id="viewDetail" role="dialog">
+	<div class="modal-dialog modal-dialog-centered  modal-lg" role="document">
+		<div class="modal-content">
+			<button type="button" class="close" data-dismiss="modal"><i class="fa fa-close"></i></button>
+			<div class="modal-body">
+				<h3 class="modal-title text-center mb-3">Job Details</h3>
+				<div class="row">
+					<div class="col-md-12">
+						<div class="form-group">
+							<h4>Job Description</h4>
+							<div class="p-2" id="jobDescriptionView"></div>
+						</div>
+					</div>
+					<div class="col-md-12">
+						<div class="form-group">
+							<h4>Job Responsibilities</h4>
+							<div class="p-2" id="jobResponsibilitiesView"></div>
+						</div>
+					</div>
+					<div class="col-md-12">
+						<div class="form-group">
+							<h4>Job Requirements</h4>
+							<div class="p-2" id="jobRequirementsView"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- /View Job details Modal -->
+
+				

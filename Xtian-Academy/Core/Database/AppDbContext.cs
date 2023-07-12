@@ -19,6 +19,7 @@ namespace Core.Database
         public DbSet<Paystack> Paystacks { get; set; }
         public DbSet<JobApplication> JobApplications { get; set; }
         public DbSet<TestResult> TestResults { get; set; }
+        public DbSet<Job> Jobs { get; set; }
 
     }
 }

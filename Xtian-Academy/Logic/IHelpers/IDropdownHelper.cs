@@ -12,5 +12,6 @@ namespace Logic.IHelpers
         List<DropDown> GetDropDownEnumsList();
         List<TrainingCourse> DropdownOfCourses();
         List<DropDown> DropdownOfCoursesWhereIsTested(string userName);
+        List<DropDown> JobTypesForSearch();
     }
 }
