@@ -1,5 +1,6 @@
 ﻿using Core.Config;
 using Core.Database;
+using Core.Enum;
 using Core.Models;
 using Logic.IHelpers;
 using Logic.SmtpMailServices;
@@ -211,6 +212,52 @@ namespace Logic.Helpers
                     string subject = "PAYMENT DECLINED";
                     string message = "Dear " + userDetail.FirstName + "<br/>" + "<br/>" + "The transaction you made for " + course + " course wasn't successful, Check your transaction history to confirm. for any clarification reach Out to us at academy@bivisoft.com<br/> " +
                         "<br/>" + " Regards <br/>";
+                    _emailService.SendEmail(toEmail, subject, message);
+                    return true;
+                };
+
+                return false;
+            }
+
+            catch (Exception)
+            {
+                throw;
+            }
+
+        }
+
+        public bool SendMailToAdminOnJobApplication(ApplicationUser userDetail, Job jobDetails)
+        {
+            try
+            {
+                if (userDetail != null)
+                {
+                    var jobType = "";
+                    if (jobDetails.Type == JobType.Full_Time_Premise)
+                    {
+                        jobType = "Full-time (On Premise)";
+                    }
+                    else if (jobDetails.Type == JobType.Part_Time_Premise)
+                    {
+                        jobType = "Part-time (On Premise)";
+                    }
+                    else if (jobDetails.Type == JobType.Full_Time_Home)
+                    {
+                        jobType = "Full-time (Work from Home)";
+                    }
+                    else
+                    {
+                        jobType = "Part-time (work from Home)";
+                    }
+                    string toEmail = _generalConfiguration.AdminEmail;
+                    string subject = "JOB REQUEST";
+                    string message = "Hey Admin! " + "<br/>" + "<br/>" +
+                        "<b>" + userDetail.LastName + " " + userDetail.FirstName + "</b> with email address <b>" + userDetail.Email + "</b> applied for the job details as stated below" + "<br/>" +
+                        "Company Name : " + jobDetails.CompanyName + "<br/>" +
+                        "Job Title : " + jobDetails.Title + "<br/>" +
+                        "Job Category : " + jobType +
+                        "<br/>" + "<br/>" +
+                        " Regards <br/>";
                     _emailService.SendEmail(toEmail, subject, message);
                     return true;
                 };

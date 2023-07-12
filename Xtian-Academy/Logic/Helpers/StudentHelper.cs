@@ -213,6 +213,121 @@ namespace Logic.Helpers
             return null;
 
         }
+        public bool CheckIfUserIsQualifiedToApplyForJobs(string userId)
+        {
+            if (userId != null)
+            {
+                var projectCompletetionCheck = _context.ProjectTopics.Where(t => t.UserId == userId && t.Status == ProjectStatus.Accepted).FirstOrDefault();
+                {
+                    if (projectCompletetionCheck != null)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
 
+        public List<JobViewModels> GetListOfAvailableJobsByJobType(string userID, JobType? id)
+        {
+            var result = new List<JobViewModels>();
+            if (userID != null && id != null && id > 0)
+            {
+                var availableJobs = _context.Jobs.Where(t => t.IsActive && t.Type == id).ToList();
+
+                if (availableJobs.Any())
+                {
+                    var appliedChecker = GetListOfJobIdsUserHaveAppliedFor(userID);
+                    result = availableJobs.Select(x => new JobViewModels()
+                    {
+                        Id = x.Id,
+                        CompanyName = x.CompanyName,
+                        Title = x.Title,
+                        Salary = x.Salary,
+                        Type = x.Type,
+                        Description = x.Description,
+                        Responsibilities = x.Responsibilities,
+                        Requirements = x.Requirements,
+                        IsActive = x.IsActive,
+                        DateCreated = x.DateCreated.ToString("R"),
+                        DescriptionList = _userHelper.SplitStringToList(x.Description),
+                        Applied = CheckIfUserHaveAppliedForThisJob(appliedChecker, x.Id),
+                    }).OrderByDescending(i => i.Id).ToList();
+                    return result;
+                }
+                return result;
+            }
+            return result;
+        }
+
+        public List<int> GetListOfJobIdsUserHaveAppliedFor(string userID)
+        {
+            var getListJobId = _context.JobApplications.Where(t => t.UserId == userID).ToList();
+            var appliedJobIDs = getListJobId.Select(x => x.JobId).ToList();
+            if (appliedJobIDs.Any())
+            {
+                return appliedJobIDs;
+            }
+            return null;
+        }
+
+        public bool CheckIfUserHaveAppliedForThisJob(List<int> getListJobId, int id)
+        {
+            if (getListJobId != null && getListJobId.Contains(id))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public List<JobViewModels> GetListOfAvailableJobs(string userID)
+        {
+            var result = new List<JobViewModels>();
+            var availableJobs = _context.Jobs.Where(t => t.IsActive).ToList();
+
+            if (availableJobs.Any())
+            {
+                var appliedChecker = GetListOfJobIdsUserHaveAppliedFor(userID);
+                result = availableJobs.Select(x => new JobViewModels()
+                {
+                    Id = x.Id,
+                    CompanyName = x.CompanyName,
+                    Title = x.Title,
+                    Salary = x.Salary,
+                    Type = x.Type,
+                    Description = x.Description,
+                    Responsibilities = x.Responsibilities,
+                    Requirements = x.Requirements,
+                    IsActive = x.IsActive,
+                    DateCreated = x.DateCreated.ToString("R"),
+                    DescriptionList = _userHelper.SplitStringToList(x.Description),
+                    Applied = CheckIfUserHaveAppliedForThisJob(appliedChecker, x.Id),
+                }).OrderByDescending(i => i.Id).ToList();
+                return result;
+            }
+            return null;
+        }
+        public async Task<JobApplication> JobApplicationServices(int jobId, ApplicationUser user)
+        {
+            if (user != null && jobId > 0)
+            {
+                var jobApplication = new JobApplication
+                {
+                    UserId = user.Id,
+                    JobId = jobId,
+                    DateApplied = DateTime.Now,
+                };
+
+                var saveCheck = await _context.JobApplications.AddAsync(jobApplication);
+                _context.SaveChanges();
+                if (saveCheck != null)
+                {
+                    var jobDetails = _context.Jobs.Where(j => j.Id == jobId).FirstOrDefault();
+                    _emailHelper.SendMailToAdminOnJobApplication(user, jobDetails);
+                    return jobApplication;
+                }
+            }
+            return null;
+        }
     }
 }

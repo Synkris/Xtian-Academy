@@ -1,4 +1,5 @@
 ﻿using Core.Database;
+using Core.Enum;
 using Core.Models;
 using Core.ViewModels;
 using Logic.IHelpers;
@@ -228,6 +229,84 @@ namespace Academy_App.Controllers
             }
             catch (Exception ex)
             {
+                return Json(new { isError = true, msg = "An unexpected error occured " + ex.Message });
+            }
+        }
+        [HttpGet]
+        public IActionResult Jobs(JobType? id)
+        {
+            ViewBag.JobTypes = _dropdownHelper.JobTypesForSearch();
+            var userId = _userHelper.FindByUserNameAsync(User.Identity.Name).Result?.Id;
+            var model = new JobViewModels();
+            var projectCompletetionCheck = _studentHelper.CheckIfUserIsQualifiedToApplyForJobs(userId);
+            {
+                if (projectCompletetionCheck)
+                {
+                    //For Searching using job type
+                    if (id > 0 && id != null)
+                    {
+                        var myJob = _studentHelper.GetListOfAvailableJobsByJobType(userId, id).OrderByDescending(i => i.Id).ToList();
+                        if (myJob.Any())
+                        {
+                            model.JobModel = myJob;
+                            model.Message = false;
+                            model.IsProjectCompleted = true;
+                        }
+                        else
+                        {
+                            model.JobModel = _studentHelper.GetListOfAvailableJobs(userId).OrderByDescending(i => i.Id).ToList();
+                            model.Message = true;
+                            model.IsProjectCompleted = true;
+                        }
+                    }
+                    else
+                    {
+                        model.JobModel = _studentHelper.GetListOfAvailableJobs(userId).OrderByDescending(i => i.Id).ToList();
+                        model.Message = false;
+                        model.IsProjectCompleted = true;
+                    }
+                    if (model != null)
+                    {
+                        return View(model);
+                    }
+                    return View();
+                }
+                else
+                {
+                    model.IsProjectCompleted = false;
+                    return View(model);
+                }
+            }
+        }
+
+        public JsonResult JobApplicationPost(int id)
+        {
+            if (id > 0)
+            {
+                var user = _userHelper.FindByUserNameAsync(User.Identity.Name).Result;
+                var paymentData = _studentHelper.JobApplicationServices(id, user);
+                if (paymentData != null)
+                {
+                    return Json(new { isError = false, msg = "Application Submitted Successfully" });
+                }
+            }
+            return Json(new { isError = true, msg = "Error occured! Please try again" });
+        }
+        [HttpGet]
+        public JsonResult FindJob(int jobId)
+        {
+            try
+            {
+                if (jobId != null)
+                {
+                    var job4Action = _userHelper.GetJobById(jobId);
+                    return Json(job4Action);
+                }
+                return Json(new { isError = true, msg = "Failed" });
+            }
+            catch (Exception ex)
+            {
+
                 return Json(new { isError = true, msg = "An unexpected error occured " + ex.Message });
             }
         }

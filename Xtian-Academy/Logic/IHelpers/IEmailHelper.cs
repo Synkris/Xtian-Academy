@@ -18,6 +18,7 @@ namespace Logic.IHelpers
         bool Gratitude(string applicantEmail);
         bool SendPaymentAprovalMsg(ApplicationUser userDetail, string course);
         bool SendPaymentDeclineMsg(ApplicationUser userDetail, string course);
+        bool SendMailToAdminOnJobApplication(ApplicationUser userDetail, Job jobDetails);
 
 
 
