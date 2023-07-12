@@ -185,5 +185,11 @@ namespace Logic.Helpers
             return allVideos;
         }
 
+        public ProjectTopic GetProjectTopicById(int? id)
+        {
+            var topic = _context.ProjectTopics.Where(p => p.Id == id).Include(s => s.Student).Include(c => c.Course).FirstOrDefault();
+            return topic;
+        }
+
     }
 }

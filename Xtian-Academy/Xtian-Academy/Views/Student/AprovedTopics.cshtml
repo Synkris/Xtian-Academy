@@ -1,0 +1,200 @@
+﻿@model IEnumerable<Core.Models.ProjectTopic>
+@{
+	ViewData["Title"] = "Aproved Topics";
+	Layout = "~/Views/Shared/_StudentLayout.cshtml";
+}
+
+<style>
+
+    body {
+        counter-reset: Serial; /* / Set the Serial counter to 0 /*/
+    }
+    tr td:first-child:before  {
+
+        counter-increment: Serial; /* / Increment the Serial counter /*/
+        content: counter(Serial); /*  / Display the counter /*/
+    }
+</style>
+
+<!-- Page Header -->
+<div class="page-header">
+						
+	<div class="row">
+		<div class="col">
+			<h3 class="page-title">Approved Project Topics</h3>
+		</div>
+	</div>  
+</div>
+<!-- /Page Header -->
+
+<!-- Video List -->
+<div class="row">
+	<div class="col-md-12">
+				@if (@Model?.Count() > 0)
+				{
+					<div class="table-responsive">	
+						<table class="table table-hover custom-table datatable mb-0">
+							<thead>
+								<tr>
+									<th>S/N</th>
+									<th>Course</th>
+									<th>Topic</th>
+									<th>Status</th>									
+									<th class="text-center">Action</th>
+								</tr>
+							</thead>
+							<tbody>
+								@foreach( var project in  Model)
+								{
+									<tr>
+										<td></td>
+										<td>@project.Course.Title</td>
+										<td>@project?.Title</td>
+										<td class="text-success">Approved</td>
+										<td class="text-center">
+											<div class="dropdown dropdown-action">
+												<a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+												<div class="dropdown-menu dropdown-menu-right">
+												@if (project.LinksIsAdded)
+												{
+													<a class="dropdown-item" href="#" data-toggle="modal" data-target="#viewLinks" onclick="MapTopicDetailsForView('@project?.Description','@project?.GitLink','@project?.RedmineLink')"><i class="fa fa-eye m-r-5 text-danger"></i> View Links</a>
+													<a class="dropdown-item" href="#" data-toggle="modal" data-target="#editLinks" onclick="MapTopicDetailsForEdit('@project?.Id','@project?.GitLink','@project?.RedmineLink')"><i class="fa fa-edit m-r-5 text-primary"></i> Edit Links</a>
+												}
+												else
+												{
+													<a class="dropdown-item" href="#" data-toggle="modal" data-target="#addLinks" onclick="MapTopicDetailsForEdit('@project?.Id')"><i class="fa fa-link m-r-5 text-primary"></i> Add Links</a>
+												}
+												</div>
+											</div>
+										</td>
+									</tr>
+								}								
+							</tbody>
+						</table>
+					</div>
+                }
+				else
+				{
+					<div cclass="row p5 m-5">
+						<div class="col-md-12 text-center p-5 m5">
+							<h2>No Record Found</h2>
+						</div>
+					</div>
+				}
+	</div>
+</div>
+<!-- /Project List -->
+
+
+<!-- Upload Git and Redmine Link Modal -->
+<div class="modal custom-modal fade" id="addLinks" role="dialog">
+	<div class="modal-dialog modal-md modal-dialog-centered">
+		<div class="modal-content">
+			<button type="button" class="close" data-dismiss="modal"><i class="fa fa-close"></i></button>
+			<div class="modal-body">
+				<h5 class="modal-title text-center mb-3">Add Project Links</h5>
+				<div class="row">
+					<div class="col-md-12">
+						<div class="form-group">
+							<input class="form-control" id="update_Id" hidden>
+							<label>GitHub Link</label>
+							<input type="text" class="form-control" id="git_link" placeholder="Paste Github Link" required>
+							<p class="text-danger" id="git_linkVDT" style="display: none;">Enter Github Link</p>
+						</div>
+					</div>
+					<div class="col-md-12">
+						<div class="form-group">
+							<label>Redmine Link</label>
+							<input type="text" class="form-control" id="redmine_link" placeholder="Paste Redmine Link" required>
+							<p class="text-danger" id="redmine_linkVDT" style="display: none;">Enter Redmine Link</p>
+						</div>
+					</div>
+				</div>
+				<div class="m-t-20 text-center">
+					<button class="btn newBtn submit-btn" onclick="AddProjectLink()">Add</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- /Upload Git and Redmine Link  Modal -->
+
+<!-- Edit Git and Redmine Link Modal -->
+<div class="modal custom-modal fade" id="editLinks" role="dialog">
+	<div class="modal-dialog modal-md modal-dialog-centered">
+		<div class="modal-content">
+			<button type="button" class="close" data-dismiss="modal"><i class="fa fa-close"></i></button>
+			<div class="modal-body">
+				<h5 class="modal-title text-center mb-3">Edit Project Links</h5>
+				<div class="row">
+					<div class="col-md-12">
+						<div class="form-group">
+							<input class="form-control" id="edit_Id" hidden>
+							<label>GitHub Link</label>
+							<input type="text" class="form-control" id="edit_Git_link" placeholder="Paste Github Link" required>
+							<p class="text-danger" id="edit_Git_linkVDT" style="display: none;">Enter Github Link</p>
+						</div>
+					</div>
+					<div class="col-md-12">
+						<div class="form-group">
+							<label>Redmine Link</label>
+							<input type="text" class="form-control" id="edit_Redmine_link" placeholder="Paste Redmine Link" required>
+							<p class="text-danger" id="edit_Redmine_linkVDT" style="display: none;">Enter Redmine Link</p>
+						</div>
+					</div>
+				</div>
+				<div class="m-t-20 text-center">
+					<button class="btn newBtn submit-btn" onclick="EditProjectLink()">Update</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- /Edit Git and Redmine Link  Modal -->
+
+<!-- View Project Links Modal -->
+<div class="modal custom-modal fade" id="viewLinks" role="dialog">
+	<div class="modal-dialog modal-md modal-dialog-centered">
+		<div class="modal-content">
+			<button type="button" class="close" data-dismiss="modal"><i class="fa fa-close"></i></button>
+			<div class="modal-body">
+				<h5 class="modal-title text-center mb-3">Project Details</h5>
+				<div class="row">
+					<div class="col-md-12">
+						<div class="form-group">
+							<div class="p-1"> <b>Project Description : </b><span id="descriptionView"></span></div>
+						</div>
+					</div>
+					<div class="col-md-12">
+						<div class="form-group">
+							<div class="p-1"> <b>Project Github Link : </b><span id="gitLinkView"></span></div>
+						</div>
+					</div>
+					<div class="col-md-12">
+						<div class="form-group">
+							<div class="p-1"> <b>Project Redmine Link : </b><span id="redmineLinkView"></span></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- /View Project Links Modal -->
+<script>
+	function MapTopicDetailsForEdit(Id, GitLink, RedmineLink) {
+		$("#edit_Id").val(Id);
+		$("#update_Id").val(Id);
+		$("#edit_Git_link").val(GitLink);
+		$("#edit_Redmine_link").val(RedmineLink); 
+		$("#gitLinkView").html(GitLink);
+		$("#redmineLinkView").html(RedmineLink);
+	}
+	function MapTopicDetailsForView(Description, GitLink, RedmineLink) {
+
+		$("#descriptionView").html(Description);
+		$("#gitLinkView").html(GitLink);
+		$("#redmineLinkView").html(RedmineLink);
+	}
+</script>
+

@@ -1,8 +1,10 @@
 ﻿using Core.Database;
+using Core.Enum;
 using Core.Models;
 using Core.ViewModels;
 using Logic.IHelpers;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Logic.Helpers
 {
@@ -128,6 +130,89 @@ namespace Logic.Helpers
             return allTrainingCourse;
         }
 
+        public List<ProjectTopic> GetListOfStutentsProjectTopic(string userId)
+        {
+            var allStutentsProjectTopic = _context.ProjectTopics.Where(p => p.UserId == userId).Include(c => c.Course).ToList();
+            if (allStutentsProjectTopic.Any())
+            {
+                return allStutentsProjectTopic;
+            }
+            return null;
+        }
+
+        public ProjectTopic UploadProjectTopicServices(ProjectTopicViewModel topics, string userId)
+        {
+            if (topics != null)
+            {
+                var topicstDetails = new ProjectTopic
+                {
+                    UserId = userId,
+                    CourseId = topics.CourseId,
+                    Title = topics.Title,
+                    Description = topics.Description,
+                    IsApproved = false,
+                    LinksIsAdded = false,
+                    Status = ProjectStatus.New,
+                    DatePosted = DateTime.Now
+
+                };
+                var newlyAddTopic = _context.ProjectTopics.Add(topicstDetails);
+                _context.SaveChanges();
+                if (newlyAddTopic != null)
+                {
+                    return topicstDetails;
+                }
+            }
+            return null;
+
+        }
+
+        public List<ProjectTopic> GetListOfStutentsApprovedProjectTopic(string userId)
+        {
+            var allStutentsProjectTopic = _context.ProjectTopics.Where(p => p.UserId == userId && p.IsApproved).Include(c => c.Course).ToList();
+            if (allStutentsProjectTopic.Any())
+            {
+                return allStutentsProjectTopic;
+            }
+            return null;
+        }
+
+        public ProjectTopic ProjectLinksUpdateServices(ProjectTopicViewModel topics)
+        {
+            if (topics != null)
+            {
+                var myApprovedTopic = _userHelper.GetProjectTopicById(topics.Id);
+
+                if (myApprovedTopic != null)
+                {
+                    myApprovedTopic.GitLink = topics.GitLink;
+                    myApprovedTopic.RedmineLink = topics.RedmineLink;
+                    myApprovedTopic.LinksIsAdded = true;
+                    myApprovedTopic.Status = ProjectStatus.Started;
+
+                    var result = _context.ProjectTopics.Update(myApprovedTopic);
+                    _context.SaveChanges();
+
+                    return myApprovedTopic;
+                }
+            }
+
+            return null;
+        }
+
+        public ProjectTopic GetProjectLinksServices(int id)
+        {
+            if (id != 0)
+            {
+                var myLinks = _context.ProjectTopics.Where(t => t.Id == id).FirstOrDefault();
+                if (myLinks != null)
+                {
+                    return myLinks;
+                }
+            }
+            return null;
+
+        }
 
     }
 }

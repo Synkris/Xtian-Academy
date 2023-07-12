@@ -1,0 +1,120 @@
+﻿@model IEnumerable<Core.Models.ProjectTopic>
+@{
+	ViewData["Title"] = "Approve Project Topics";
+	Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+
+	body {
+		counter-reset: Serial; /* / Set the Serial counter to 0 /*/
+	}
+
+	tr td:first-child:before {
+		counter-increment: Serial; /* / Increment the Serial counter /*/
+		content: counter(Serial); /*  / Display the counter /*/
+	}
+</style>
+
+<!-- Page Header -->
+<div class="page-header">
+
+	<div class="row">
+		<div class="col">
+			<h3 class="page-title">Approve Students Project Topic</h3>
+		</div>
+	</div>
+</div>
+<!-- /Page Header -->
+<!-- Video List -->
+<div class="row">
+	<div class="col-md-12">
+		@if (@Model.Count() > 0)
+		{
+			<div class="table-responsive">
+				<table class="table table-hover custom-table datatable mb-0">
+					<thead>
+						<tr>
+							<th>S/N</th>
+							<th>Student</th>
+							<th>Course</th>
+							<th>Topic</th>
+							<th>Status</th>
+							<th>Action</th>
+						</tr>
+					</thead>
+					<tbody>
+						@foreach (var project in Model)
+						{
+							<tr>
+								<td></td>
+								<td>@project.Student.FirstName</td>
+								<td>@project.Course.Title</td>
+								<td>@project.Title</td>
+								@if (@project.IsApproved)
+								{
+									<td class="text-success">Approved</td>
+								}
+								else
+								{
+									<td>Pending</td>
+								}
+								<td class="text-right">
+									<div class="dropdown dropdown-action">
+										<a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+										<div class="dropdown-menu dropdown-menu-right">
+											<a class="dropdown-item text-center" href="#" data-toggle="modal" data-target="#viewProjectDetails" onclick="MapProjectTopicDetails('@project?.Title','@project?.Description')"> View Details</a>
+											<a class="dropdown-item text-center" href="#" onclick="AppoveSelectedProjectTopic('@project.Id')">Approve</a>
+										</div>
+									</div>
+								</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
+		}
+		else
+		{
+			<div cclass="row p5 m-5">
+				<div class="col-md-12 text-center p-5 m5">
+					<h2>No Record Found</h2>
+				</div>
+			</div>
+		}
+	</div>
+</div>
+<!-- /Video List -->
+
+<!-- View Project Details Modal -->
+<div id="viewProjectDetails" class="modal custom-modal fade" role="dialog">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title"><b>Project Details</b></h4>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="input-group m-b-10">
+					<h5><b>Title : </b><span id="projectTopicView"></span></h5>
+				</div>
+				<div class="input-group m-b-10">
+					<p><b>Description : </b><span id="projectDescriptionView"></span></p>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- /View Project Details Modal -->
+
+
+<script>
+	function MapProjectTopicDetails(Title, Description) {
+		debugger
+		$("#projectTopicView").html(Title);
+		$("#projectDescriptionView").html(Description);
+	}
+
+</script>

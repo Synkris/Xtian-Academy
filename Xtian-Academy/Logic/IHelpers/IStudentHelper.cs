@@ -16,6 +16,11 @@ namespace Logic.IHelpers
         bool DeosApplicantDocummentExist(string username);
         StudentDashBoardViewModel DashboardBuildingServices(string userName);
         List<TrainingCourse> GetAllTrainingCourseDB();
+        List<ProjectTopic> GetListOfStutentsProjectTopic(string userId);
+        ProjectTopic UploadProjectTopicServices(ProjectTopicViewModel topics, string userId);
+        List<ProjectTopic> GetListOfStutentsApprovedProjectTopic(string userId);
+        ProjectTopic ProjectLinksUpdateServices(ProjectTopicViewModel topics);
+        ProjectTopic GetProjectLinksServices(int id);
 
 
     }

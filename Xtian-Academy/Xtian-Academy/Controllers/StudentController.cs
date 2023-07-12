@@ -1,5 +1,6 @@
 ﻿using Core.Database;
 using Core.Models;
+using Core.ViewModels;
 using Logic.IHelpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -143,6 +144,84 @@ namespace Academy_App.Controllers
                 {
                     var courseOutLine = _userHelper.GetVideosById(id).Outline;
                     return Json(courseOutLine);
+                }
+                return Json(new { isError = true, msg = "Failed" });
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new { isError = true, msg = "An unexpected error occured " + ex.Message });
+            }
+        }
+
+        [HttpGet]
+        public IActionResult ProjectTopics()
+        {
+            var userId = _userHelper.FindByUserNameAsync(User.Identity.Name).Result.Id;
+            ViewBag.AllCourses = _dropdownHelper.DropdownOfCoursesWhereIsTested(User.Identity.Name);
+            var myTopics = _studentHelper.GetListOfStutentsProjectTopic(userId);
+            if (myTopics != null)
+            {
+                return View(myTopics);
+            }
+            return View();
+        }
+        [HttpPost]
+        public JsonResult UploadProjectTopics(string topics)
+        {
+            if (topics != null)
+            {
+                var myTopics = JsonConvert.DeserializeObject<ProjectTopicViewModel>(topics);
+                if (myTopics != null)
+                {
+                    var userId = _userHelper.FindByUserNameAsync(User.Identity.Name).Result.Id;
+                    var newTopic = _studentHelper.UploadProjectTopicServices(myTopics, userId);
+                    if (newTopic != null)
+                    {
+                        return Json(new { isError = false, msg = "Topic Uploaded Successfully." });
+                    }
+                }
+            }
+            return Json(new { isError = true, msg = "Upload Failed" });
+        }
+        [HttpGet]
+        public IActionResult AprovedTopics()
+        {
+            var userId = _userHelper.FindByUserNameAsync(User.Identity.Name).Result.Id;
+            var myTopics = _studentHelper.GetListOfStutentsApprovedProjectTopic(userId);
+            if (myTopics != null)
+            {
+                return View(myTopics);
+            }
+            return View();
+        }
+        [HttpPost]
+        public JsonResult ProjectLinkUpdatePost(string topicData)
+        {
+            if (topicData != null)
+            {
+                var myTopics = JsonConvert.DeserializeObject<ProjectTopicViewModel>(topicData);
+                if (myTopics != null)
+                {
+                    var result = _studentHelper.ProjectLinksUpdateServices(myTopics);
+
+                    if (result != null)
+                    {
+                        return Json(new { isError = false, msg = "Updated Successfully." });
+                    }
+                }
+            }
+            return Json(new { isError = true, msg = "Update Failed" });
+        }
+        [HttpGet]
+        public JsonResult GetProjectLinksById(int id)
+        {
+            try
+            {
+                if (id != 0)
+                {
+                    var links = _studentHelper.GetProjectLinksServices(id);
+                    return Json(links);
                 }
                 return Json(new { isError = true, msg = "Failed" });
 
