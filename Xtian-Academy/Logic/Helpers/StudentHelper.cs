@@ -329,5 +329,35 @@ namespace Logic.Helpers
             }
             return null;
         }
+
+        public async Task<Payments> UploadMaualPaymentProve(PaymentsViewModel prove, string userId)
+        {
+            if (prove != null)
+            {
+                var myPayment = new Payments
+                {
+                    Source = TransactionType.Transfer,
+                    InvoiceNumber = Generate().ToString(),
+                    ProveOfPayment = prove.ProveOfPayment,
+                    UserId = userId,
+                    CourseId = prove.Id,
+                    Status = PaymentStatus.Pending,
+                    Date = DateTime.Now,
+                };
+
+                var saveCheck = await _context.Payments.AddAsync(myPayment);
+                _context.SaveChanges();
+                if (saveCheck != null)
+                {
+                    return myPayment;
+                }
+            }
+            return null;
+        }
+        public static int Generate()
+        {
+            Random rand = new Random((int)DateTime.Now.Ticks);
+            return rand.Next(100000000, 999999999);
+        }
     }
 }
