@@ -27,6 +27,7 @@ namespace Logic.IHelpers
         List<JobViewModels> GetListOfAvailableJobsByJobType(string userID, JobType? id);
         List<JobViewModels> GetListOfAvailableJobs(string userID);
         Task<JobApplication> JobApplicationServices(int jobId, ApplicationUser user);
+        Task<Payments> UploadMaualPaymentProve(PaymentsViewModel prove, string userId);
 
 
     }

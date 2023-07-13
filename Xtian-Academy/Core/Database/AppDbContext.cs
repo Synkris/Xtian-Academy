@@ -20,6 +20,8 @@ namespace Core.Database
         public DbSet<JobApplication> JobApplications { get; set; }
         public DbSet<TestResult> TestResults { get; set; }
         public DbSet<Job> Jobs { get; set; }
+        public DbSet<ReoccuringPayments> ReoccuringPayments { get; set; }
+        public DbSet<SalaryRetures> SalaryRetureHistory { get; set; }
 
     }
 }

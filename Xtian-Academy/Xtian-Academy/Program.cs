@@ -15,7 +15,8 @@ builder.Services.AddScoped<IUserHelper, UserHelper>()
         .AddScoped<IDropdownHelper, DropdownHelper>()
         .AddScoped<IApplicationHelper, ApplicationHelper>()
         .AddScoped<IStudentHelper, StudentHelper>()
-        .AddScoped<IAdminHelper, AdminHelper>();
+        .AddScoped<IAdminHelper, AdminHelper>()
+        .AddScoped<IPaystackHelper, PaystackHelper>();
 
 //builder.Services.AddScoped<IUserHelper, UserHelper>();
 builder.Services.AddSingleton<IGeneralConfiguration>(builder.Configuration.GetSection("GeneralConfiguration").Get<GeneralConfiguration>());
