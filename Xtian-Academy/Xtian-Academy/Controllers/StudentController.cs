@@ -21,10 +21,11 @@ namespace Academy_App.Controllers
         private readonly IApplicationHelper _applicationHelper;
         private readonly IUserHelper _userHelper;
         private readonly IStudentHelper _studentHelper;
+        private readonly IPaystackHelper _paystackHelper;
 
 
         public StudentController(AppDbContext context, UserManager<ApplicationUser> userManger, SignInManager<ApplicationUser> signInManager, IDropdownHelper dropdownHelper, 
-            IApplicationHelper applicationHelper, IUserHelper userHelper, IStudentHelper studentHelper)
+            IApplicationHelper applicationHelper, IUserHelper userHelper, IStudentHelper studentHelper, IPaystackHelper paystackHelper)
         {
             _context = context;
             _userManger = userManger;
@@ -33,6 +34,7 @@ namespace Academy_App.Controllers
             _applicationHelper = applicationHelper;
             _userHelper = userHelper;
             _studentHelper = studentHelper;
+            _paystackHelper = paystackHelper;
         }
         public IActionResult Index()
         {
@@ -310,7 +312,71 @@ namespace Academy_App.Controllers
                 return Json(new { isError = true, msg = "An unexpected error occured " + ex.Message });
             }
         }
-
+        public JsonResult GetPaymentDetials(int? id)
+        {
+            if (id != null)
+            {
+                var user = _userHelper.FindByUserNameAsync(User.Identity.Name).Result;
+                var paymentData = _userHelper.GetTrainingCourseById(id);
+                if (paymentData != null && user != null)
+                {
+                    var paymentLink = _paystackHelper.GeneratePaymentParameters(paymentData, user).Result;
+                    if (paymentLink != null)
+                    {
+                        var paylink = paymentLink.data.authorization_url;
+                        return Json(new { isError = false, paystackUrl = paylink });
+                    }
+                }
+            }
+            return Json(new { isError = true, msg = "Failed" });
+        }
+        [AllowAnonymous]
+        public IActionResult PaystackResponseFeedback(Paystack paystack)
+        {
+            if (paystack != null)
+            {
+                var isCoursePayment = _paystackHelper.GetPaystackHistoryByReference(paystack);
+                if (isCoursePayment != null)
+                {
+                    var paymentResponse = _paystackHelper.GetPaymentResponse(isCoursePayment);
+                    if (paymentResponse)
+                    {
+                        return RedirectToAction("StudentCourses");
+                    }
+                }
+                else
+                {
+                    var isSalaryPayment = _paystackHelper.GetReoccuringPaymentsHistoryByReference(paystack);
+                    if (isSalaryPayment != null)
+                    {
+                        var paymentResponse = _paystackHelper.CreateSalaryPaymentHistory(paystack);
+                        if (paymentResponse)
+                        {
+                            return RedirectToAction("Index", "Home");
+                        }
+                    }
+                }
+            }
+            return RedirectToAction("Login", "Accounts");
+        }
+        [HttpPost]
+        public JsonResult ManualPaymenUpload(string paymentData)
+        {
+            if (paymentData != null)
+            {
+                var myPaymentProve = JsonConvert.DeserializeObject<PaymentsViewModel>(paymentData);
+                if (myPaymentProve != null)
+                {
+                    var userId = _userHelper.FindByUserNameAsync(User.Identity.Name).Result.Id;
+                    var proveSaved = _studentHelper.UploadMaualPaymentProve(myPaymentProve, userId);
+                    if (proveSaved != null)
+                    {
+                        return Json(new { isError = false, msg = "Uploaded Successfully. Your Upload will be reviewed before you can access this Course" });
+                    }
+                }
+            }
+            return Json(new { isError = true, msg = "Upload Failed" });
+        }
 
     }
 }

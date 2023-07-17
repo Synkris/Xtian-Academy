@@ -107,7 +107,7 @@ namespace Core.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Job");
+                    b.ToTable("Jobs");
                 });
 
             modelBuilder.Entity("Core.Models.JobApplication", b =>
@@ -311,6 +311,161 @@ namespace Core.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("ProjectTopics");
+                });
+
+            modelBuilder.Entity("Core.Models.ReoccuringPayments", b =>
+                {
+                    b.Property<int>("MainId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MainId"));
+
+                    b.Property<bool>("IsAuthorized")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("access_code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("amount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("authorization_url")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("createdAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("currency")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("dateUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("domain")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("hosted_page")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("id")
+                        .HasColumnType("int");
+
+                    b.Property<int>("integration")
+                        .HasColumnType("int");
+
+                    b.Property<string>("interval")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("invoice_limit")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("is_archived")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("migrate")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("plan_code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("reference")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("send_invoices")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("send_sms")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("updatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("MainId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ReoccuringPayments");
+                });
+
+            modelBuilder.Entity("Core.Models.SalaryRetures", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("InvoiceNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("PaymentDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ReoccuringPaymentsId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ReoccuringPaymentsId");
+
+                    b.ToTable("SalaryRetureHistory");
+                });
+
+            modelBuilder.Entity("Core.Models.TestResult", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CourseId")
+                        .IsRequired()
+                        .HasColumnType("int");
+
+                    b.Property<int>("ResultOne")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ResultTwo")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("TestOneChecker")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("TestTwoChecker")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Total")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CourseId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("TestResults");
                 });
 
             modelBuilder.Entity("Core.Models.TrainingCourse", b =>
@@ -740,6 +895,47 @@ namespace Core.Migrations
                 });
 
             modelBuilder.Entity("Core.Models.ProjectTopic", b =>
+                {
+                    b.HasOne("Core.Models.TrainingCourse", "Course")
+                        .WithMany()
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Core.Models.ApplicationUser", "Student")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Course");
+
+                    b.Navigation("Student");
+                });
+
+            modelBuilder.Entity("Core.Models.ReoccuringPayments", b =>
+                {
+                    b.HasOne("Core.Models.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Core.Models.SalaryRetures", b =>
+                {
+                    b.HasOne("Core.Models.ReoccuringPayments", "ReoccuringPayments")
+                        .WithMany()
+                        .HasForeignKey("ReoccuringPaymentsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ReoccuringPayments");
+                });
+
+            modelBuilder.Entity("Core.Models.TestResult", b =>
                 {
                     b.HasOne("Core.Models.TrainingCourse", "Course")
                         .WithMany()

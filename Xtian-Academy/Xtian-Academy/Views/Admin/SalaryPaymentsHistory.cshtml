@@ -1,0 +1,71 @@
+﻿@model IEnumerable<Core.Models.SalaryRetures>
+@{
+	ViewData["Title"] = "Aproved Topics";
+	Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+
+	body {
+		counter-reset: Serial; /* / Set the Serial counter to 0 /*/
+	}
+
+	tr td:first-child:before {
+		counter-increment: Serial; /* / Increment the Serial counter /*/
+		content: counter(Serial); /*  / Display the counter /*/
+	}
+</style>
+
+<!-- Page Header -->
+<div class="page-header">
+
+	<div class="row">
+		<div class="col">
+			<h3 class="page-title">Salary Payments Histories</h3>
+		</div>
+	</div>
+</div>
+<!-- /Page Header -->
+
+<div class="row">
+	<div class="col-md-12">
+		@if (@Model.Count() > 0 && Model != null)
+		{
+			<div class="table-responsive">
+				<table class="table table-striped custom-table mb-0 datatable">
+					<thead>
+						<tr>
+							<th>S/N</th>
+							<th>Invioce Number</th>
+							<th>User's Name</th>
+							<th>User's Email</th>
+							<th>Amount Paid</th>
+							<th>Payment Date</th>
+						</tr>
+					</thead>
+					@foreach (var payment in Model)
+					{
+						<tbody>
+							<tr>
+								<td></td>
+								<td>@payment.InvoiceNumber</td>
+								<td>@payment.ReoccuringPayments.User.FullName</td>
+								<td>@payment.ReoccuringPayments.User.Email</td>
+								<td>@String.Format("{0:n}", payment.ReoccuringPayments.amount)</td>
+								<td>@payment.PaymentDate.ToShortDateString()</td>
+							</tr>
+						</tbody>
+					}
+				</table>
+			</div>
+		}
+		else
+		{
+			<div cclass="row p5 m-5">
+				<div class="col-md-12 text-center p-5 m5">
+					<h2>No Record Found</h2>
+				</div>
+			</div>
+		}
+	</div>
+</div>
