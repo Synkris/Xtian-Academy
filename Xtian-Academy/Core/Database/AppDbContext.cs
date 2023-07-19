@@ -22,6 +22,13 @@ namespace Core.Database
         public DbSet<Job> Jobs { get; set; }
         public DbSet<ReoccuringPayments> ReoccuringPayments { get; set; }
         public DbSet<SalaryRetures> SalaryRetureHistory { get; set; }
+        public DbSet<EmployementData> EmployementData { get; set; }
+        public DbSet<ExamDuration> ExamDuration { get; set; }
+        public DbSet<InterviewQuestions> InterviewQuestions { get; set; }
+        public DbSet<InterviewAnswerOptions> InterviewAnswerOptions { get; set; }
+        public DbSet<InterviewTestResult> InterviewTestResults { get; set; }
+        public DbSet<AnswerOptions> AnswerOptions { get; set; }
+        public DbSet<TestQuestions> TestQuestions { get; set; }
 
     }
 }

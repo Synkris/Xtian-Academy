@@ -28,7 +28,13 @@ namespace Logic.IHelpers
         List<JobViewModels> GetListOfAvailableJobs(string userID);
         Task<JobApplication> JobApplicationServices(int jobId, ApplicationUser user);
         Task<Payments> UploadMaualPaymentProve(PaymentsViewModel prove, string userId);
-
+        EmployementData EMploymentDataServer(EmployementDataViewModel employmentData, string userId);
+        InterviewTestResult InterviewAnswerComputation(InterviewQuestionsViewModel collectedData, string username);
+        TrainingCourse GetTrainingCourseById(int? id);
+        TestResult GetStudentResult(int? Id, string userID);
+        TestResult ListOfAnsweredQuestions(TestQuestionsViewModel collectedData, string username);
+        TestResult CheckIfTestOneHasBeebTakenByCurrentUser(int? id, string username);
+ 
 
     }
 }

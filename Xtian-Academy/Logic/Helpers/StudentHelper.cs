@@ -359,5 +359,207 @@ namespace Logic.Helpers
             Random rand = new Random((int)DateTime.Now.Ticks);
             return rand.Next(100000000, 999999999);
         }
+        public EmployementData EMploymentDataServer(EmployementDataViewModel employmentData, string userId)
+        {
+            if (employmentData != null && userId != null)
+            {
+                var employmentInfo = new EmployementData
+                {
+                    UserId = userId,
+                    CompanyName = employmentData.CompanyName,
+                    CompanyAddress = employmentData.CompanyAddress,
+                    CompanyState = employmentData.CompanyState,
+                    CompanyEmail = employmentData.CompanyEmail,
+                    CompanyHrPhoneNO = employmentData.CompanyHrPhoneNO,
+                    MonthlyPaymentDate = employmentData.MonthlyPaymentDate,
+                    JobTitle = employmentData.JobTitle,
+                    OfferLetter = employmentData.OfferLetter,
+                    Salary = employmentData.Salary,
+                    MonthlyDeduction = employmentData.MonthlyDeduction,
+                    IsApproved = false,
+                    DateCreated = DateTime.Now,
+                };
+
+                var saveCheck = _context.EmployementData.Add(employmentInfo);
+                _context.SaveChanges();
+                if (saveCheck != null)
+                {
+                    return employmentInfo;
+                }
+            }
+            return null;
+        }
+
+        public InterviewTestResult InterviewAnswerComputation(InterviewQuestionsViewModel collectedData, string username)
+        {
+            try
+            {
+                var user = _userHelper.FindByUserNameAsync(username).Result;
+                var correctAnswer = new List<InterviewQuestions>();
+                var question = collectedData.InterviewAnsweredQuestions.Select(x => x.questionId).ToList();
+                var answers = collectedData.InterviewAnsweredQuestions.Select(x => x.selectedAnswer).ToList();
+                var questions = _context.InterviewQuestions.Where(x => x.Id != 0 && question.Contains(x.Id)).ToList();
+                if (questions.Any())
+                {
+                    foreach (var ans in collectedData.InterviewAnsweredQuestions)
+                    {
+                        var myResult = questions.Where(q => q.Id == ans.questionId && q.Answer == ans.selectedAnswer).FirstOrDefault();
+                        if (myResult != null)
+                        {
+                            correctAnswer.Add(myResult);
+                        }
+                    }
+                }
+
+                var resultCount = correctAnswer.Count();
+                if (correctAnswer != null)
+                {
+                    var result = new InterviewTestResult()
+                    {
+                        UserId = user.Id,
+                        TotalScore = (resultCount * 5),
+                        DateWritten = DateTime.Now,
+                    };
+
+                    _context.InterviewTestResults.Add(result);
+                    _context.SaveChanges();
+                    return result;
+                }
+                return null;
+
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+        public TrainingCourse GetTrainingCourseById(int? id)
+        {
+            try
+            {
+                var courses = _context.TrainingCourse.Where(t => t.Id == id && !t.IsDeleted && t.IsActive).FirstOrDefault();
+                if (courses != null)
+                {
+                    return courses;
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+        public TestResult GetStudentResult(int? Id, string userID)
+        {
+            try
+            {
+
+                var myResult = _context.TestResults.Where(r => r.CourseId == Id && r.UserId == userID).FirstOrDefault();
+                if (myResult != null)
+                {
+                    return myResult;
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+        public TestResult ListOfAnsweredQuestions(TestQuestionsViewModel collectedData, string username)
+        {
+            try
+            {
+                var user = _userHelper.FindByUserNameAsync(username).Result;
+                var correctAnswer = new List<TestQuestions>();
+                var question = collectedData.AnsweredQuestions.Select(x => x.questionId).ToList();
+                var answers = collectedData.AnsweredQuestions.Select(x => x.selectedAnswer).ToList();
+                var questions = _context.TestQuestions.Where(x => x.Id != 0 && question.Contains(x.Id)).ToList();
+                var courseId = _context.TestQuestions.Where(x => x.Id != 0 && question.Contains(x.Id)).FirstOrDefault().CourseId;
+                if (questions.Any())
+                {
+                    foreach (var ans in collectedData.AnsweredQuestions)
+                    {
+                        var myResult = questions.Where(q => q.Id == ans.questionId && q.Answer == ans.selectedAnswer).FirstOrDefault();
+                        if (myResult != null)
+                        {
+                            correctAnswer.Add(myResult);
+                        }
+                    }
+                }
+                var resultCount = correctAnswer.Count();
+                if (collectedData.ActionType == GeneralAction.CREATE)
+                {
+                    var resultOne = new TestResult()
+                    {
+                        UserId = user.Id,
+                        CourseId = courseId,
+                        ResultOne = (resultCount * 10),
+                        TestOneChecker = true,
+                        ResultTwo = 0,
+                        TestTwoChecker = false,
+                        Total = (resultCount * 10) / 2,
+                    };
+
+                    var firstTestResult = _context.Add(resultOne);
+                    _context.SaveChanges();
+                    return resultOne;
+                }
+                else if (collectedData.ActionType == GeneralAction.UPDATE)
+                {
+                    var resultTwo = _context.TestResults.Where(t => t.Id == collectedData.Id).FirstOrDefault();
+                    if (!resultTwo.TestTwoChecker)
+                    {
+                        if (resultTwo != null)
+                        {
+                            resultTwo.ResultTwo = (resultCount * 10);
+                            var result2Average = (resultCount * 10) / 2;
+                            resultTwo.TestTwoChecker = true;
+                            resultTwo.Total = (resultTwo.Total + result2Average);
+
+                            var firstTestResult = _context.Update(resultTwo);
+                            _context.SaveChanges();
+
+                            return resultTwo;
+                        }
+                    }
+                    return resultTwo;
+                }
+                return null;
+
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+        public TestResult CheckIfTestOneHasBeebTakenByCurrentUser(int? id, string username)
+        {
+            try
+            {
+                if (id != null && username != null)
+                {
+                    var user = _userHelper.FindByUserNameAsync(username).Result;
+                    var testOneStatusCheck = _context.TestResults.Where(r => r.UserId == user.Id && r.CourseId == id).FirstOrDefault();
+                    if (testOneStatusCheck != null)
+                    {
+                        return testOneStatusCheck;
+                    }
+                }
+                return null;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+
+
     }
 }

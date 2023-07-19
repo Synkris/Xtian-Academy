@@ -1,0 +1,123 @@
+﻿@model Core.ViewModels.GeneralViewModel
+@{
+	ViewData["Title"] = "Test page I";
+	Layout = "~/Views/Shared/_StudentLayout.cshtml";
+}
+
+<style>
+	.ctdBox ul li{
+		list-style-type: none;
+		font-size: 20px;
+		color: #0253cc;
+	}
+</style>
+<h1 class="text-center">First section of @Model.Courses.Title</h1>
+<div class="row justify-content-center">
+	<div class="col-10">
+		<div class="row py-3">
+			<div class="col-md-12 text-center text-primary">
+				<div class="d-inline-flex ctdBox">  
+					<div class="px-2 text-center">
+						<ul>
+							<li id="countDownHrs"></li>
+							<li>Hrs</li>
+						</ul>
+					</div>
+					<div class="px-2 text-center">
+						<ul>
+							<li id="countDownMin"></li>
+							<li>MIN</li>
+						</ul>
+					</div>
+					<div class="px-2 text-center">
+						<ul>
+							<li id="countDownSec"></li>
+							<li>SEC</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+	@if (@Model.QuestionMain.Count() > 0)
+	{
+		@foreach (var question in Model.QuestionMain)
+		{						
+			<div class="row justify-content-center">
+				<div class="col-md-10">
+					<div class="card card-table flex-fill">
+						<h3 class="pl-3 pt-3">@question.Question</h3>
+						<div class="col-md-10">
+							<div class="row">
+								@foreach (var opt in question.OptionList)
+								{
+									<div class="col-md-6">
+										<div class="radio pb-3 pl-5">
+											<label><input type="radio" class="chkd"  name="@question.Id" value="@opt"> @opt</label>
+										</div>
+									</div>
+								}
+							</div>
+						</div>
+					</div>
+				</div>		
+			</div>
+		}
+		<div class="row justify-content-center">
+			<div class="col-md-10">
+				<div class="card-footer text-center">
+				<a class="btn newBtn" style="width:20%;" onclick="manualSubmitTest('CREATE')"><b>Submit</b></a>
+				</div>
+			</div>		
+		</div>
+	}
+	else
+	{
+		<div cclass="row p5 m-5">
+			<div class="col-md-12 text-center p-5 m5">
+				<h2>No Record Found</h2>
+			</div>
+		</div>
+	}
+
+<input type="text" id="autoStopper" hidden />
+<input type="text" id="manualStopper" hidden />
+
+<script>
+		var duration = @Model.Courses?.TestDuration;
+		var d = new Date();
+		// Set the date we're counting down to
+		var closingTime = d.setMinutes(d.getMinutes() + duration);
+		var x = setInterval(function() 
+		{
+			// Get today's date and time
+			var now = new Date().getTime();
+			// Find the distance between now and the count down date
+			var distance = closingTime - now;
+			// Time calculations for days, hours, minutes and seconds
+
+			var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+			var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+			var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+			// Output the result in an element with id="demo"
+			
+			document.getElementById("countDownHrs").innerHTML = hours;
+			document.getElementById("countDownMin").innerHTML = minutes;
+			document.getElementById("countDownSec").innerHTML = seconds;
+			
+			// If the count down is over, write some text 
+			if (distance < 0) {
+				clearInterval(x);
+                autoSubmitTest('CREATE');
+			}
+		}, 1000);
+</script>
+<script>
+	(function () {
+		$("#autoStopper").val("Off");
+		$("#manualStopper").val("Off");
+	})();
+</script>
+
+
