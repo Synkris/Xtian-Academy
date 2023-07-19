@@ -1,0 +1,144 @@
+﻿@model Core.ViewModels.TestResultViewModel
+@{
+	ViewData["Title"] = "Take Test";
+	Layout = "~/Views/Shared/_StudentLayout.cshtml";
+	var courseID = ViewBag.SelectedCourseId;
+}
+
+<h1>Take Test Page</h1>
+<div class="row">
+	<div class="col-md-12 d-flex">
+		<div class="card card-table flex-fill">
+			<div class="card-header">
+				<h3 class="card-title mb-0">TEST 1</h3>
+			</div>
+			<div class="card-body p-3">
+				<h3><a href="#" class="text-dark"><i class="fa fa-file-text text-info" style="font-size:48px;"></i> Take first 10 test</a></h3>
+			</div>
+			<div class="card-footer">		
+				@if(@Model.Result?.TestOneChecker != true){
+					<a href="#" data-toggle="modal" data-target="#test_first" class="btn newBtn text-white" style="width: 15%;">Start</a>
+				}
+				else
+				{	
+					<a href="#" data-toggle="modal" data-target="#view_result"  class="btn newBtn text-white" style="width: 15%;">View Result</a>			
+				}
+			</div>
+		</div>
+	</div>
+	<div class="col-md-12 d-flex">
+		<div class="card card-table flex-fill">
+			<div class="card-header">
+				@if(@Model.Result?.TestOneChecker != true){					
+				<h3 class="card-title mb-0">TEST 2 <b><i class="text-danger">Restricted</i></b></h3>
+				}else{					
+					<h3 class="card-title mb-0">TEST 2</h3>
+				}
+			</div>
+			<div class="card-body p-3">	
+				<h3><a href="#" class="text-dark"><i class="fa fa-file-text text-info" style="font-size:48px;"></i> Take last 10 test</a></h3>
+			</div>
+			<div class="card-footer">	
+				@if(@Model.Result?.TestOneChecker == true && @Model.Result?.TestTwoChecker != true){
+					<a href="#" data-toggle="modal" data-target="#test_sec" class="btn newBtn text-white" style="width: 15%;">Start</a>
+				}
+				else
+				{
+					@if(@Model.Result?.TestOneChecker != true)
+					{
+						<a class="btn btn-warning" disabled>Complete Test One to have Access to test two</a>
+					}else{
+						<a href="#" data-toggle="modal" data-target="#view_result" class="btn newBtn text-white" style="width: 15%;">View Result</a>
+					}		
+				}
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- VIEW RESULTModal -->
+<div class="modal custom-modal fade" id="view_result" role="dialog">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-body">
+				<div class="form-header">
+					<h2 class="text-center">Result Details</h2>
+					  <div class="d-flex mt-2">
+						<div class="p-2 flex-fill"><h4>Test One Result</h4></div>
+						<div class="p-2 text-center flex-fill"><h4>@Model.Result?.ResultOne %</h4></div>
+					  </div>
+						<div class="d-flex my-1">
+						<div class="p-2 flex-fill"><h4>Test One Result</h4></div>
+						<div class="p-2 text-center flex-fill"><h4>@Model.Result?.ResultTwo %</h4></div>
+					  </div>
+						<div class="d-flex mb-2">
+						<div class="p-2 flex-fill"><h4>Avarage Result</h4></div>
+						<div class="p-2 text-center flex-fill"><h4>@Model.Result?.Total %</h4></div>
+					  </div>
+				</div>
+				<div class="modal-btn">
+					<div class="row justify-content-center">
+						<div class="col-6 justify-content-center">
+							<a href="javascript:void(0);" data-dismiss="modal" class="btn btn-primary cancel-btn">Close</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- /VIEW RESULT Modal -->
+
+<!--TEST One Loader Modal -->
+<div class="modal custom-modal fade" id="test_first" role="dialog">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-body">
+				<div class="form-header text-center">
+					<i class='fa fa-exclamation-triangle text-warning' style='font-size:50px;'></i>
+					  <div class="mt-2">
+						  <h3>This Test is going to last for <b>@Model.Courses?.TestDuration Mins</b> and it will automatically be submitted once the time elapses!</h3>
+					  </div>
+				</div>
+				<div class="modal-btn">
+					<div class="row">
+						<div class="col-6">
+							<a asp-action="FirstTest" asp-controller="Student" asp-route-id="@Model.Courses.Id" class="btn btn-primary continue-btn">Start Now</a>
+						</div>
+						<div class="col-6">
+							<a href="javascript:void(0);" data-dismiss="modal" class="btn btn-primary cancel-btn">Cancel</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- /TEST One Loader  Modal -->
+
+<!--TEST Two Loader Modal -->
+<div class="modal custom-modal fade" id="test_sec" role="dialog">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-body">
+				<div class="form-header text-center">
+					<i class='fa fa-exclamation-triangle text-warning' style='font-size:50px;'></i>
+					  <div class="mt-2">
+						  <h3>This Test is going to last for <b>@Model.Courses.TestDuration Mins</b> and it will automatically be submitted once the time elapses!</h3>
+					  </div>
+				</div>
+				<div class="modal-btn">
+					<div class="row">
+						<div class="col-6">
+							<a asp-action="SecondTest" asp-controller="Student" asp-route-id="@Model.Courses.Id" class="btn btn-primary continue-btn">Start Now</a>
+						</div>
+						<div class="col-6">
+							<a href="javascript:void(0);" data-dismiss="modal" class="btn btn-primary cancel-btn">Cancel</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- /TEST Two Loader  Modal -->
