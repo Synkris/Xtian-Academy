@@ -1,0 +1,212 @@
+﻿@{
+	ViewData["Title"] = "Graduation form";
+	Layout = "~/Views/Shared/_StudentLayout.cshtml";
+}
+<div class="content container-fluid">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="card mb-0">
+				<div class="card-header">
+					<h4 class="card-title mb-0">Graduation Form</h4>
+					<p>Please make sure that all the information you are submitting through this form is false free</p>
+				</div>
+				<div class="card-body">
+					<div class="row">
+						<div class="col-xl-12">
+							<h4 class="card-title">Company Information</h4>
+							<div class="form-group row">
+								<div class="col-lg-6 md-3">
+									<label>Company Name</label>
+									<input type="text" class="form-control" id="name">
+									<p class="text-danger" id="nameVDT" style="display: none;"><b>Enter Company Name</b></p>
+								</div>
+								<div class="col-lg-6 mb-3">
+									<label>Company Address</label>
+									<input type="text" class="form-control" id="address">
+									<p class="text-danger" id="addressVDT" style="display: none;"><b>Enter Company Address</b></p>
+								</div>
+								<div class="col-lg-6 md-3">
+									<label>Company State</label>
+									<input type="text" class="form-control" id="state">
+									<p class="text-danger" id="stateVDT" style="display: none;"><b>Enter state where company is located</b></p>
+								</div>
+								<div class="col-lg-6 mb-3">
+									<label>Company Email</label>
+									<input type="email" class="form-control" id="email">
+									<p class="text-danger" id="emailVDT" style="display: none;"><b>Enter Company Email</b></p>
+								</div>
+								<div class="col-lg-6 mb-3">
+									<label>Company HR PhoneNumber</label>
+									<input type="number" class="form-control" id="hrTel">
+									<p class="text-danger" id="hrTelVDT" style="display: none;"><b>Enter Company HR Phonenumber</b></p>
+								</div>
+								<div class="col-lg-6 md-3">
+									<label>Company Salary Payment Date</label>
+									<input type="date" class="form-control" id="payDate">
+									<p class="text-danger" id="payDateVDT" style="display: none;"><b>Enter Company Salary Payment Date</b></p>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-xl-12">
+							<h4 class="card-title">Employment Information</h4>
+							<div class="form-group row">
+								<div class="col-lg-6 md-3">
+									<label>Job Title</label>
+									<input type="text" class="form-control" id="jobTitle">
+									<p class="text-danger" id="jobTitleVDT" style="display: none;"><b>Enter Job Title</b></p>
+								</div>
+								<div class="col-lg-6 mb-3">
+									<label>Upload Offer Letter(Pdf)</label>
+									<input class="form-control" type="file" accept="application/pdf" id="offerLetter">
+									<p class="text-danger" id="offerLetterVDT" style="display: none;"><b>Upload Offer Letter</b></p>
+								</div>
+								<div class="col-lg-6 mb-3">
+									<label>Salary</label>
+									<input type="text" class="form-control" id="salary" onchange="PercentageDeductionComputation()">
+									<input type="text" class="form-control" id="mainSalary" hidden>
+									<p class="text-danger" id="salaryVDT" style="display: none;"><b>Enter Proposed Salary</b></p>
+								</div>
+								<div class="col-lg-6 md-3">
+									<label>Monthly Deduction (25% of salary)</label>
+									<input type="text" class="form-control" readonly id="percentageDeduction">
+									<input type="text" class="form-control" readonly id="mainDeduction" hidden>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="text-center">
+						<button class="btn newBtn" type="submit" style="width: 25%;" onclick="EmploymentInfo()">Submit</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+	function PercentageDeductionComputation()
+	{
+		debugger
+		var mySalary = $("#salary").val();
+		var deduction = (mySalary * 0.25);
+		$("#mainSalary").val(mySalary.toString());
+		$("#mainDeduction").val(deduction.toString());
+
+		$("#percentageDeduction").val(deduction.toLocaleString('en-US'));
+
+		var salToString = (mySalary * 1).toLocaleString('en-US');
+		$("#salary").val(salToString);
+	}
+
+	function EmploymentInfo()
+	{
+		debugger
+		var employmentData = {};
+		employmentData.CompanyName = $("#name").val();
+		employmentData.CompanyAddress = $("#address").val();
+		employmentData.CompanyState = $("#state").val();
+		employmentData.CompanyEmail = $("#email").val();
+		employmentData.CompanyHrPhoneNO = $("#hrTel").val();
+		employmentData.MonthlyPaymentDate = $("#payDate").val();
+		employmentData.JobTitle = $("#jobTitle").val();
+		employmentData.OfferLetter = document.getElementById("offerLetter").files;
+		employmentData.Salary = $("#mainSalary").val();
+		var deduct
+		employmentData.MonthlyDeduction = $("#mainDeduction").val();
+
+		if (employmentData.CompanyName == "" || employmentData.CompanyAddress == "" || employmentData.CompanyState == "" || employmentData.CompanyEmail == "" || employmentData.CompanyHrPhoneNO == "" || employmentData.MonthlyPaymentDate == "" || employmentData.JobTitle == "" || employmentData.OfferLetter[0] == null || employmentData.Salary == "") 
+		{
+			if (employmentData.CompanyName == "") {
+				document.querySelector("#nameVDT").style.display = "block";
+			} else {
+				document.querySelector("#nameVDT").style.display = "none";
+			}
+			if (employmentData.CompanyAddress == "") {
+				document.querySelector("#addressVDT").style.display = "block";
+			} else {
+				document.querySelector("#addressVDT").style.display = "none";
+			}
+			if (employmentData.CompanyState == "") {
+				document.querySelector("#stateVDT").style.display = "block";
+			} else {
+				document.querySelector("#stateVDT").style.display = "none";
+			}
+			if (employmentData.CompanyEmail == "") {
+				document.querySelector("#emailVDT").style.display = "block";
+			} else {
+				document.querySelector("#emailVDT").style.display = "none";
+			}
+			if (employmentData.CompanyHrPhoneNO == "") {
+				document.querySelector("#hrTelVDT").style.display = "block";
+			} else {
+				document.querySelector("#hrTelVDT").style.display = "none";
+			}
+			if (employmentData.MonthlyPaymentDate == "") {
+				document.querySelector("#payDateVDT").style.display = "block";
+			} else {
+				document.querySelector("#payDateVDT").style.display = "none";
+			}
+			if (employmentData.JobTitle == "") {
+				document.querySelector("#jobTitleVDT").style.display = "block";
+			} else {
+				document.querySelector("#jobTitleVDT").style.display = "none";
+			}
+			if (employmentData.OfferLetter[0] == null) {
+				document.querySelector("#offerLetterVDT").style.display = "block";
+			} else {
+				document.querySelector("#offerLetterVDT").style.display = "none";
+			}
+			if (employmentData.Salary == "") {
+				document.querySelector("#salaryVDT").style.display = "block";
+			} else {
+				document.querySelector("#salaryVDT").style.display = "none";
+			}
+		}
+		else
+		{
+			document.querySelector("#nameVDT").style.display = "none";
+			document.querySelector("#addressVDT").style.display = "none";
+			document.querySelector("#stateVDT").style.display = "none";
+			document.querySelector("#emailVDT").style.display = "none";
+			document.querySelector("#hrTelVDT").style.display = "none";
+			document.querySelector("#payDateVDT").style.display = "none";
+			document.querySelector("#jobTitleVDT").style.display = "none";
+			document.querySelector("#offerLetterVDT").style.display = "none";
+			document.querySelector("#salaryVDT").style.display = "none";
+			const reader = new FileReader();
+			reader.readAsDataURL(employmentData.OfferLetter[0]);
+
+			reader.onload = function () 
+			{
+				debugger
+				employmentData.OfferLetter = reader.result;
+
+				let collectedData = JSON.stringify(employmentData);
+
+				$.ajax({
+					type: 'Post',
+					dataType: 'json',
+					url: '/Student/EmploymentInformationPost',
+					data:
+					{
+						employmentData: collectedData,
+					},
+					success: function (result) {
+
+						if (!result.isError) {
+							var url = '/Student/Index';
+							successAlertWithRedirect(result.msg, url)
+						}
+						else {
+							errorAlert(result.msg)
+						}
+					},
+					error: function (ex) {
+						errorAlert("Error occured try again");
+					}
+				});
+			}
+		}
+	}
+</script>

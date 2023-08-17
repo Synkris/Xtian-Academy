@@ -368,15 +368,184 @@ namespace Academy_App.Controllers
                 if (myPaymentProve != null)
                 {
                     var userId = _userHelper.FindByUserNameAsync(User.Identity.Name).Result.Id;
-                    var proveSaved = _studentHelper.UploadMaualPaymentProve(myPaymentProve, userId);
-                    if (proveSaved != null)
-                    {
-                        return Json(new { isError = false, msg = "Uploaded Successfully. Your Upload will be reviewed before you can access this Course" });
-                    }
+                    //var proveSaved = _studentHelper.UploadMaualPaymentProve(myPaymentProve, userId);
+                    //if (proveSaved != null)
+                    //{
+                    //    return Json(new { isError = false, msg = "Uploaded Successfully. Your Upload will be reviewed before you can access this Course" });
+                    //}
                 }
             }
             return Json(new { isError = true, msg = "Upload Failed" });
         }
+        public IActionResult GraduationForm()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public JsonResult EmploymentInformationPost(string employmentData)
+        {
+            if (employmentData != null)
+            {
+                var employmentInfo = JsonConvert.DeserializeObject<EmployementDataViewModel>(employmentData);
+                if (employmentInfo != null)
+                {
+                    var userId = _userHelper.FindByUserNameAsync(User.Identity.Name).Result.Id;
+                    if (userId != null)
+                    {
+                        var employmentDetailsCreated = _studentHelper.EMploymentDataServer(employmentInfo, userId);
+                        if (employmentDetailsCreated != null)
+                        {
+                            return Json(new { isError = false, msg = "Submitted Successfully." });
+                        }
+                    }
+                }
+            }
+            return Json(new { isError = true, msg = "Failed" });
+        }
+
+        [HttpGet]
+        public IActionResult InterviewQuestions()
+        {
+            var modelEmpty = new InterviewViewModel();
+            var username = User.Identity.Name;
+            if (username != null)
+            {
+                var model = _userHelper.GetInterviewQuestions(username);
+                return View(model);
+            }
+            return View(modelEmpty);
+        }
+
+        public JsonResult SubmitInterviewAnwser(string collectedData)
+        {
+            try
+            {
+                if (collectedData != null)
+                {
+                    var user = User.Identity.Name;
+                    var answerDetails = JsonConvert.DeserializeObject<InterviewQuestionsViewModel>(collectedData);
+                    if (answerDetails != null)
+                    {
+                        var result = _studentHelper.InterviewAnswerComputation(answerDetails, user);
+                        if (result != null)
+                        {
+                            return Json(new { isError = false, msg = "Submitted Succesfully. Admin will review and get back to you" });
+                        }
+                    }
+                }
+                return Json(new { isError = true, msg = "Failed" });
+            }
+            catch (Exception ex)
+            {
+
+                return Json(new { isError = true, msg = "An unexpected error occured " + ex.Message });
+            }
+        }
+
+        [HttpGet]
+        public IActionResult TrainingVideos()
+        {
+            var userId = _userHelper.FindByUserNameAsync(User.Identity.Name).Result?.Id;
+            if (userId != null)
+            {
+                var videos = _userHelper.GetStudentPaidTrainingVideos(userId);
+                return View(videos);
+            }
+            return View();
+        }
+        [HttpGet]
+        public IActionResult TakeTest(int? id)
+        {
+            try
+            {
+                if (id != null)
+                {
+                    var userId = _userHelper.FindByUserNameAsync(User.Identity.Name).Result.Id;
+                    var model = new TestResultViewModel();
+                    model.Courses = _studentHelper.GetTrainingCourseById(id);
+                    model.Result = _studentHelper.GetStudentResult(id, userId);
+                    return View(model);
+                }
+                return Redirect("TrainingVideos");
+            }
+            catch (Exception ex)
+            {
+
+                return Json(new { isError = true, msg = "An unexpected error occured " + ex.Message });
+            }
+
+        }
+        [HttpGet]
+        public IActionResult FirstTest(int? id)
+        {
+            try
+            {
+                if (id != null)
+                {
+                    if (id != null)
+                    {
+                        var user = User.Identity.Name;
+                        var model = new GeneralViewModel();
+                        model.QuestionMain = _userHelper.GetTestQuestionsForPage1(id);
+                        model.Courses = _studentHelper.GetTrainingCourseById(id);
+                        return View(model);
+                    }
+                }
+                return Redirect("TrainingVideos");
+            }
+            catch (Exception ex)
+            {
+                return Json(new { isError = true, msg = "An unexpected error occured " + ex.Message });
+            }
+        }
+        public IActionResult SecondTest(int? id)
+        {
+            try
+            {
+                if (id != null)
+                {
+                    if (id != null)
+                    {
+                        var userId = _userHelper.FindByUserNameAsync(User.Identity.Name).Result.Id;
+                        var model = new GeneralViewModel();
+                        model.QuestionMain = _userHelper.GetTestQuestionsForPage2(id);
+                        model.Courses = _studentHelper.GetTrainingCourseById(id);
+                        model.TestResults = _studentHelper.GetStudentResult(id, userId);
+                        return View(model);
+                    }
+                }
+                return Redirect("TrainingVideos");
+            }
+            catch (Exception ex)
+            {
+
+                return Json(new { isError = true, msg = "An unexpected error occured " + ex.Message });
+            }
+        }
+        public JsonResult SubmitTestQuestions(string collectedData)
+        {
+            try
+            {
+                if (collectedData != null)
+                {
+                    var user = User.Identity.Name;
+                    var answerDetails = JsonConvert.DeserializeObject<TestQuestionsViewModel>(collectedData);
+                    var result = _studentHelper.ListOfAnsweredQuestions(answerDetails, user);
+                    if (result != null)
+                    {
+                        return Json(new { isError = false, msg = "Submitted Succesfully", courseID = result.CourseId });
+                    }
+                }
+                return Json(new { isError = true, msg = "Failed" });
+            }
+            catch (Exception ex)
+            {
+
+                return Json(new { isError = true, msg = "An unexpected error occured " + ex.Message });
+            }
+        }
+
 
     }
 }

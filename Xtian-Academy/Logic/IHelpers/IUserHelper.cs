@@ -1,4 +1,5 @@
 ﻿using Core.Models;
+using Core.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,5 +30,21 @@ namespace Logic.IHelpers
         ProjectTopic GetProjectTopicById(int? id);
         List<string> SplitStringToList(string dataString);
         Job GetJobById(int? Id);
+        InterviewViewModel GetInterviewQuestions(string username);
+        List<string> GetInterviewOptListByQuestionIds(int id);
+        int GetInterviewTestDuration();
+        bool CheckIfUserHaveTakenThisInterview(string userID);
+        List<TrainingVideos> GetStudentPaidTrainingVideos(string userID);
+        List<TestQuestionsViewModel> GetTestQuestionsForPage1(int? Id);
+        List<TestQuestionsViewModel> GetTestQuestionsForPage2(int? Id);
+        TestQuestions GetQuestionsById(int? Id);
+        List<TestQuestions> GetTestQuestions();
+        List<ProjectTopic> AllSubmenttedProjectTopic();
+        ProjectTopic CheckIfATopicHasBeenApprovedForTheSelectedCourse(ProjectTopic proj2Approve);
+        List<string> GetOptListByQuestionIds(int id);
+        List<InterviewQuestions> GetInterviewTestQuestions();
+        InterviewQuestions GetInterviewQuestionsById(int Id);
+
+
     }
 }
