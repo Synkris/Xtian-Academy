@@ -257,6 +257,104 @@ namespace Logic.Helpers
             }
             return null;
         }
- 
+
+        public TestQuestions TestQuestionsServices(TestQuestionsViewModel collectedData)
+        {
+            if (collectedData.ActionType == GeneralAction.CREATE)
+            {
+                var newQuestion = new TestQuestions
+                {
+                    CourseId = collectedData.CourseId,
+                    Question = collectedData.Question,
+                    Answer = collectedData.Answer,
+                    IsActive = true,
+                    IsDeleted = false,
+                    DateCreated = DateTime.Now,
+                };
+
+                _context.TestQuestions.Add(newQuestion);
+                _context.SaveChanges();
+
+                return newQuestion;
+            }
+            else if (collectedData.ActionType == GeneralAction.EDIT)
+            {
+                var questionEdited = _userHelper.GetQuestionsById(collectedData.Id);
+
+                questionEdited.CourseId = collectedData.CourseId;
+                questionEdited.Question = collectedData.Question;
+                questionEdited.Answer = collectedData.Answer;
+
+                _context.TestQuestions.Update(questionEdited);
+                _context.SaveChanges();
+
+                return questionEdited;
+            }
+            else if (collectedData.ActionType == GeneralAction.ACTIVATE)
+            {
+                var questionActivate = _userHelper.GetQuestionsById(collectedData.Id);
+
+                questionActivate.IsActive = true;
+
+                _context.TestQuestions.Update(questionActivate);
+                _context.SaveChanges();
+
+                return questionActivate;
+            }
+            else if (collectedData.ActionType == GeneralAction.DEACTIVATE)
+            {
+                var questionDeactivate = _userHelper.GetQuestionsById(collectedData.Id);
+
+                questionDeactivate.IsActive = false;
+
+                _context.TestQuestions.Update(questionDeactivate);
+                _context.SaveChanges();
+
+                return questionDeactivate;
+            }
+            else if (collectedData.ActionType == GeneralAction.DELETE)
+            {
+                var questionDeleted = _userHelper.GetQuestionsById(collectedData.Id);
+
+                questionDeleted.IsDeleted = true;
+
+                _context.TestQuestions.Update(questionDeleted);
+                _context.SaveChanges();
+
+                return questionDeleted;
+            }
+            return null;
+        }
+
+        public List<string> GetOptListByQuestionIds(int id)
+        {
+            var optList = new List<string>();
+            var optListDetails = _context.AnswerOptions.Where(a => a.QuestionId == id).OrderByDescending(o => o.Id).ToList();
+            if (optListDetails.Any())
+            {
+                optList = optListDetails.Select(a => a.Option).ToList();
+                return optList;
+            }
+            return null;
+        }
+
+        public AnswerOptions PostServices4Options(AnswerOptions collectedData)
+        {
+            if (collectedData != null)
+            {
+                var newOption = new AnswerOptions
+                {
+                    QuestionId = collectedData.Id,
+                    Option = collectedData.Option,
+                };
+
+                _context.AnswerOptions.Add(newOption);
+                _context.SaveChanges();
+
+                return newOption;
+            }
+            return null;
+        }
+
     }
 }
