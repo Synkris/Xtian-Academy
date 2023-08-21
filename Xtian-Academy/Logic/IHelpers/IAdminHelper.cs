@@ -15,5 +15,8 @@ namespace Logic.IHelpers
         Payments DeclineSelectedPaymment(Payments paymentData);
         TrainingVideos TrainignVideoServices(TrainingVideosViewModel collectedData);
 
+        TestQuestions TestQuestionsServices(TestQuestionsViewModel collectedData);
+        List<string> GetOptListByQuestionIds(int id);
+        AnswerOptions PostServices4Options(AnswerOptions collectedData);
     }
 }

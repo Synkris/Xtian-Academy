@@ -368,5 +368,180 @@ namespace Xtian_Academy.Controllers
             model.Videos = _userHelper.GetTrainingVideos();
             return View(model);
         }
+
+        [HttpPost]
+        public JsonResult TrainingVideoUpload(string collectedVideoData)
+        {
+            try
+            {
+                ViewBag.AllCourses = _dropdownHelper.DropdownOfCourses();
+                if (collectedVideoData != null)
+                {
+                    var videoDetails = JsonConvert.DeserializeObject<TrainingVideosViewModel>(collectedVideoData);
+
+                    if (videoDetails != null)
+                    {
+                        var newVideoAdded = _adminHelper.TrainignVideoServices(videoDetails);
+                        if (newVideoAdded != null)
+                        {
+                            if (videoDetails.ActionType == GeneralAction.CREATE)
+                            {
+                                return Json(new { isError = false, msg = "Created Successfully" });
+                            }
+                            if (videoDetails.ActionType == GeneralAction.EDIT)
+                            {
+                                return Json(new { isError = false, msg = "Updated Successfully" });
+                            }
+                            if (videoDetails.ActionType == GeneralAction.DELETE)
+                            {
+                                return Json(new { isError = false, msg = "Deleted Successfully" });
+                            }
+                        }
+                        else
+                        {
+                            return Json(new { isError = true, msg = "Failed" });
+                        }
+                    }
+                }
+                return Json(new { isError = true, msg = "Failed" });
+            }
+            catch (Exception ex)
+            {
+
+                return Json(new { isError = true, msg = "An unexpected error occured " + ex.Message });
+            }
+        }
+
+        [HttpGet]
+        public IActionResult TestQuestions()
+        {
+            var username = User.Identity.Name;
+            ViewBag.Layout = _applicationHelper.GetUserLayout(username).FirstOrDefault();
+            var model = new GeneralViewModel();
+            ViewBag.AllCourses = _dropdownHelper.DropdownOfCourses();
+            model.Questions = _userHelper.GetTestQuestions();
+            return View(model);
+        }
+
+        [HttpPost]
+        public JsonResult AdminPostActionsForTestQuestions(string collectedTestQuestionsData)
+        {
+            try
+            {
+                if (collectedTestQuestionsData != null)
+                {
+                    var questionDetails = JsonConvert.DeserializeObject<TestQuestionsViewModel>(collectedTestQuestionsData);
+
+                    if (questionDetails != null)
+                    {
+                        var newVideoAdded = _adminHelper.TestQuestionsServices(questionDetails);
+                        if (newVideoAdded != null)
+                        {
+                            if (questionDetails.ActionType == GeneralAction.CREATE)
+                            {
+                                return Json(new { isError = false, msg = "Created Successfully" });
+                            }
+                            if (questionDetails.ActionType == GeneralAction.EDIT)
+                            {
+                                return Json(new { isError = false, msg = "Updated Successfully" });
+                            }
+                            if (questionDetails.ActionType == GeneralAction.ACTIVATE)
+                            {
+                                return Json(new { isError = false, msg = "Activated Successfully" });
+                            }
+                            if (questionDetails.ActionType == GeneralAction.DEACTIVATE)
+                            {
+                                return Json(new { isError = false, msg = "Deactivated Successfully" });
+                            }
+                            if (questionDetails.ActionType == GeneralAction.DELETE)
+                            {
+                                return Json(new { isError = false, msg = "Deleted Successfully" });
+                            }
+                        }
+                        else
+                        {
+                            return Json(new { isError = true, msg = "Failed" });
+                        }
+                    }
+                }
+                return Json(new { isError = true, msg = "Failed" });
+            }
+            catch (Exception ex)
+            {
+
+                return Json(new { isError = true, msg = "An unexpected error occured " + ex.Message });
+            }
+        }
+
+        // QUESTION  GET ACTION
+        [HttpGet]
+        public JsonResult GetQuestionById(int? Id)
+        {
+            try
+            {
+                if (Id != null)
+                {
+                    var question4Action = _userHelper.GetQuestionsById(Id);
+                    return Json(question4Action);
+                }
+                return Json(new { isError = true, msg = "Failed" });
+            }
+            catch (Exception ex)
+            {
+
+                return Json(new { isError = true, msg = "An unexpected error occured " + ex.Message });
+            }
+        }
+
+        public JsonResult GetOptionsByQuestionId(int id)
+        {
+            try
+            {
+                if (id != 0)
+                {
+                    var listOfOpt = _adminHelper.GetOptListByQuestionIds(id);
+                    var nullResult = "No Record Found";
+                    if (listOfOpt != null)
+                    {
+                        return Json(listOfOpt);
+                    }
+                    return Json(new { isNull = true, val = nullResult });
+                }
+                return Json(new { isError = true, msg = "Failed" });
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new { isError = true, msg = "An unexpected error occured " + ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public JsonResult AddAnwserOptions(string dataCollected)
+        {
+            try
+            {
+                if (dataCollected != null)
+                {
+                    var optDetails = JsonConvert.DeserializeObject<AnswerOptions>(dataCollected);
+
+                    if (optDetails != null)
+                    {
+                        var newOpt = _adminHelper.PostServices4Options(optDetails);
+                        if (newOpt != null)
+                        {
+                            return Json(new { isError = false, msg = "Created Successfully" });
+                        }
+                    }
+                }
+                return Json(new { isError = true, msg = "Failed" });
+            }
+            catch (Exception ex)
+            {
+
+                return Json(new { isError = true, msg = "An unexpected error occured " + ex.Message });
+            }
+        }
+
     }
 }
