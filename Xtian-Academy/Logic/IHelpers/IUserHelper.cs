@@ -44,6 +44,7 @@ namespace Logic.IHelpers
         List<string> GetOptListByQuestionIds(int id);
         List<InterviewQuestions> GetInterviewTestQuestions();
         InterviewQuestions GetInterviewQuestionsById(int Id);
+      
 
 
     }
