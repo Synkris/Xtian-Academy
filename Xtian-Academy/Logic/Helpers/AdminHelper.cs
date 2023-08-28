@@ -389,6 +389,87 @@ namespace Logic.Helpers
 
             return null;
         }
+        public List<Job> GetListOfAllJobs()
+        {
+            var allJobs = _context.Jobs.OrderBy(d => d.DateCreated).ToList();
+            if (allJobs.Any())
+            {
+                return allJobs;
+            }
+            return null;
+        }
+        public Job JobManagementServices(JobViewModels collectedData)
+        {
+            if (collectedData.ActionType == GeneralAction.CREATE)
+            {
+                var newJob = new Job
+                {
+                    CompanyName = collectedData.CompanyName,
+                    Title = collectedData.Title,
+                    Salary = collectedData.Salary,
+                    Type = collectedData.Type,
+                    Description = collectedData.Description,
+                    Responsibilities = collectedData.Responsibilities,
+                    Requirements = collectedData.Requirements,
+                    IsActive = true,
+                    DateCreated = DateTime.Now,
+                };
+
+                _context.Jobs.Add(newJob);
+                _context.SaveChanges();
+
+                return newJob;
+            }
+            else if (collectedData.ActionType == GeneralAction.EDIT)
+            {
+                var job = _userHelper.GetJobById(collectedData.Id);
+
+                job.CompanyName = collectedData.CompanyName;
+                job.Title = collectedData.Title;
+                job.Salary = collectedData.Salary;
+                job.Type = collectedData.Type;
+                job.Description = collectedData.Description;
+                job.Responsibilities = collectedData.Responsibilities;
+                job.Requirements = collectedData.Requirements;
+
+                _context.Jobs.Update(job);
+                _context.SaveChanges();
+
+                return job;
+            }
+            else if (collectedData.ActionType == GeneralAction.DEACTIVATE)
+            {
+                var job = _userHelper.GetJobById(collectedData.Id);
+
+                job.IsActive = false;
+
+                _context.Jobs.Update(job);
+                _context.SaveChanges();
+
+                return job;
+            }
+            else if (collectedData.ActionType == GeneralAction.ACTIVATE)
+            {
+                var job = _userHelper.GetJobById(collectedData.Id);
+
+                job.IsActive = true;
+
+                _context.Jobs.Update(job);
+                _context.SaveChanges();
+
+                return job;
+            }
+            return null;
+        }
+        public List<EmployementData> GetListOfEmploymentData()
+        {
+            var employmentList = _context.EmployementData.Include(u => u.User).OrderByDescending(d => d.DateCreated).ToList();
+            if (employmentList.Any())
+            {
+                return employmentList;
+            }
+            return null;
+        }
 
     }
 }
