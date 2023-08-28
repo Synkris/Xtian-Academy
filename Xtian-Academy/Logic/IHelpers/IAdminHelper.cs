@@ -23,5 +23,8 @@ namespace Logic.IHelpers
         List<Job> GetListOfAllJobs();
         Job JobManagementServices(JobViewModels collectedData);
         List<EmployementData> GetListOfEmploymentData();
+        InterviewQuestions InterviewQuestionsServices(InterviewQuestionsViewModel collectedData);
+        List<string> GetInterviewOptListByQuestionIds(int id);
+        InterviewAnswerOptions PostServicesInterviewAnsOptions(InterviewAnswerOptions collectedData);
     }
 }

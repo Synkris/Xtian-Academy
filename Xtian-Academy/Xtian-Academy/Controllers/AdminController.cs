@@ -696,6 +696,112 @@ namespace Xtian_Academy.Controllers
             var employmentList = _adminHelper.GetListOfEmploymentData();
             return View(employmentList);
         }
+        [HttpGet]
+        public IActionResult InterviewQuestions()
+        {
+            var Questions = _userHelper.GetInterviewTestQuestions();
+            return View(Questions);
+        }
+
+        [HttpPost]
+        public JsonResult PostActionsForInterveiwQuestions(string collectedTestQuestionsData)
+        {
+            try
+            {
+                if (collectedTestQuestionsData != null)
+                {
+                    var questionDetails = JsonConvert.DeserializeObject<InterviewQuestionsViewModel>(collectedTestQuestionsData);
+
+                    if (questionDetails != null)
+                    {
+                        var newVideoAdded = _adminHelper.InterviewQuestionsServices(questionDetails);
+                        if (newVideoAdded != null)
+                        {
+                            if (questionDetails.ActionType == GeneralAction.CREATE)
+                            {
+                                return Json(new { isError = false, msg = "Created Successfully" });
+                            }
+                            if (questionDetails.ActionType == GeneralAction.EDIT)
+                            {
+                                return Json(new { isError = false, msg = "Updated Successfully" });
+                            }
+                            if (questionDetails.ActionType == GeneralAction.ACTIVATE)
+                            {
+                                return Json(new { isError = false, msg = "Activated Successfully" });
+                            }
+                            if (questionDetails.ActionType == GeneralAction.DEACTIVATE)
+                            {
+                                return Json(new { isError = false, msg = "Deactivated Successfully" });
+                            }
+                            if (questionDetails.ActionType == GeneralAction.DELETE)
+                            {
+                                return Json(new { isError = false, msg = "Deleted Successfully" });
+                            }
+                        }
+                        else
+                        {
+                            return Json(new { isError = true, msg = "Failed" });
+                        }
+                    }
+                }
+                return Json(new { isError = true, msg = "Failed" });
+            }
+            catch (Exception ex)
+            {
+
+                return Json(new { isError = true, msg = "An unexpected error occured " + ex.Message });
+            }
+        }
+
+        public JsonResult GetInterviewOptionsByQuestionId(int id)
+        {
+            try
+            {
+                if (id != 0)
+                {
+                    var listOfOpt = _adminHelper.GetInterviewOptListByQuestionIds(id);
+                    var nullResult = "No Record Found";
+                    if (listOfOpt != null)
+                    {
+                        return Json(listOfOpt);
+                    }
+                    return Json(new { isNull = true, val = nullResult });
+                }
+                return Json(new { isError = true, msg = "Failed" });
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new { isError = true, msg = "An unexpected error occured " + ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public JsonResult AddInterViewAnwserOptions(string dataCollected)
+        {
+            try
+            {
+                if (dataCollected != null)
+                {
+                    var optDetails = JsonConvert.DeserializeObject<InterviewAnswerOptions>(dataCollected);
+
+                    if (optDetails != null)
+                    {
+                        var newOpt = _adminHelper.PostServicesInterviewAnsOptions(optDetails);
+                        if (newOpt != null)
+                        {
+                            return Json(new { isError = false, msg = "Created Successfully" });
+                        }
+                    }
+                }
+                return Json(new { isError = true, msg = "Failed" });
+            }
+            catch (Exception ex)
+            {
+
+                return Json(new { isError = true, msg = "An unexpected error occured " + ex.Message });
+            }
+        }
 
     }
 }
