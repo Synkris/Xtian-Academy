@@ -470,6 +470,96 @@ namespace Logic.Helpers
             }
             return null;
         }
+        public InterviewQuestions InterviewQuestionsServices(InterviewQuestionsViewModel collectedData)
+        {
+            if (collectedData.ActionType == GeneralAction.CREATE)
+            {
+                var newQuestion = new InterviewQuestions
+                {
+                    Question = collectedData.Question,
+                    Answer = collectedData.Answer,
+                    IsActive = true,
+                    DateCreated = DateTime.Now,
+                };
+
+                _context.InterviewQuestions.Add(newQuestion);
+                _context.SaveChanges();
+
+                return newQuestion;
+            }
+            else if (collectedData.ActionType == GeneralAction.EDIT)
+            {
+                var questionEdited = _userHelper.GetInterviewQuestionsById(collectedData.Id);
+
+                questionEdited.Question = collectedData.Question;
+                questionEdited.Answer = collectedData.Answer;
+
+                _context.InterviewQuestions.Update(questionEdited);
+                _context.SaveChanges();
+
+                return questionEdited;
+            }
+            else if (collectedData.ActionType == GeneralAction.ACTIVATE)
+            {
+                var questionActivate = _userHelper.GetInterviewQuestionsById(collectedData.Id);
+
+                questionActivate.IsActive = true;
+
+                _context.InterviewQuestions.Update(questionActivate);
+                _context.SaveChanges();
+
+                return questionActivate;
+            }
+            else if (collectedData.ActionType == GeneralAction.DEACTIVATE)
+            {
+                var questionDeactivate = _userHelper.GetInterviewQuestionsById(collectedData.Id);
+
+                questionDeactivate.IsActive = false;
+
+                _context.InterviewQuestions.Update(questionDeactivate);
+                _context.SaveChanges();
+
+                return questionDeactivate;
+            }
+            else if (collectedData.ActionType == GeneralAction.DELETE)
+            {
+                var questionDeleted = _userHelper.GetInterviewQuestionsById(collectedData.Id);
+
+                _context.InterviewQuestions.Remove(questionDeleted);
+                _context.SaveChanges();
+
+                return questionDeleted;
+            }
+            return null;
+        }
+        public List<string> GetInterviewOptListByQuestionIds(int id)
+        {
+            var optList = new List<string>();
+            var optListDetails = _context.InterviewAnswerOptions.Where(a => a.QuestionId == id).OrderByDescending(o => o.Id).ToList();
+            if (optListDetails.Any())
+            {
+                optList = optListDetails.Select(a => a.Option).ToList();
+                return optList;
+            }
+            return null;
+        }
+        public InterviewAnswerOptions PostServicesInterviewAnsOptions(InterviewAnswerOptions collectedData)
+        {
+            if (collectedData != null)
+            {
+                var newOption = new InterviewAnswerOptions
+                {
+                    QuestionId = collectedData.Id,
+                    Option = collectedData.Option,
+                };
+
+                _context.InterviewAnswerOptions.Add(newOption);
+                _context.SaveChanges();
+
+                return newOption;
+            }
+            return null;
+        }
 
     }
 }
