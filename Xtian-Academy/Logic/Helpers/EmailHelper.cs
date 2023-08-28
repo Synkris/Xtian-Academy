@@ -4,6 +4,7 @@ using Core.Enum;
 using Core.Models;
 using Logic.IHelpers;
 using Logic.SmtpMailServices;
+using Microsoft.EntityFrameworkCore;
 
 namespace Logic.Helpers
 {
@@ -31,8 +32,6 @@ namespace Logic.Helpers
             _emailService.SendEmail(toEmail, subject, message);
             return true;
         }
-
-
 
         public bool VerificationEmail(string applicantEmail, string linkToClick)
         {
@@ -294,6 +293,33 @@ namespace Logic.Helpers
                     _emailService.SendEmail(toEmail, subject, message);
                     return true;
                 };
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public bool SendMailToNewEmployee(string reference)
+        {
+            try
+            {
+                var myPlanDetails = _context.ReoccuringPayments.Where(x => x.reference == reference).Include(c => c.User).FirstOrDefault();
+                if (myPlanDetails != null)
+                {
+                    string toEmail = myPlanDetails.User.Email;
+                    string subject = "25% MONTHLY DEDUCTION FORM SALARY";
+                    string message = "Congratulations on your new job." + "<br/> " +
+                        "As agreed, 25% of your salary will be funded to company's accounts for the next 24 months. click on the button below to activate." + "<br/> " +
+                        "<a  href='" + myPlanDetails.authorization_url + "' target='_blank'>" + "<button style='color:white; background-color:#018DE4; padding:10px; border:10px;'>Activate Now</button>" + "</a>" + "<br/> " + "<br/>" +
+                        "If the link does not work, copy the link here to your browser: " + myPlanDetails.authorization_url + "<br/>" +
+                        "Need help? We’re here for you.Simply reply to this email to contact us. <br/>" +
+                    "Kind regards,<br/>" +
+                    "<b>Bivisoft Limited.</b>";
+                    _emailService.SendEmail(toEmail, subject, message);
+                    return true;
+                }
 
                 return false;
             }
