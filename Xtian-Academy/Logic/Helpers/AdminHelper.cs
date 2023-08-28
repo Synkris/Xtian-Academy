@@ -560,6 +560,17 @@ namespace Logic.Helpers
             }
             return null;
         }
+        public List<SalaryRetures> GetListOfSalaryPaymentsHistory()
+        {
+            var history = new List<SalaryRetures>();
+
+            var histories = _context.SalaryRetureHistory.Include(r => r.ReoccuringPayments).Include(r => r.ReoccuringPayments.User).OrderByDescending(d => d.PaymentDate).ToList();
+            if (histories.Any())
+            {
+                return histories;
+            }
+            return history;
+        }
 
     }
 }

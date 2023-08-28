@@ -26,5 +26,6 @@ namespace Logic.IHelpers
         InterviewQuestions InterviewQuestionsServices(InterviewQuestionsViewModel collectedData);
         List<string> GetInterviewOptListByQuestionIds(int id);
         InterviewAnswerOptions PostServicesInterviewAnsOptions(InterviewAnswerOptions collectedData);
+        List<SalaryRetures> GetListOfSalaryPaymentsHistory();
     }
 }

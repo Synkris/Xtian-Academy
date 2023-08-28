@@ -802,6 +802,11 @@ namespace Xtian_Academy.Controllers
                 return Json(new { isError = true, msg = "An unexpected error occured " + ex.Message });
             }
         }
+        public IActionResult SalaryPaymentsHistory()
+        {
+            var histories = _adminHelper.GetListOfSalaryPaymentsHistory();
+            return View(histories);
+        }
 
     }
 }
