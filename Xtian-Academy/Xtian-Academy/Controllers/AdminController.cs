@@ -617,5 +617,85 @@ namespace Xtian_Academy.Controllers
             return Json(new { isError = true, msg = "Failed" });
         }
 
+        public IActionResult Jobs()
+        {
+            ViewBag.JobTypes = _dropdownHelper.JobTypes();
+            var allJobs = _adminHelper.GetListOfAllJobs();
+            if (allJobs != null && allJobs.Count > 0)
+            {
+                return View(allJobs);
+            }
+            return View();
+        }
+        [HttpPost]
+        public JsonResult JopMGTPostAction(string collectedJobData)
+        {
+            try
+            {
+                if (collectedJobData != null)
+                {
+                    var collectedJobDetails = JsonConvert.DeserializeObject<JobViewModels>(collectedJobData);
+
+                    if (collectedJobDetails != null)
+                    {
+                        var newJobData = _adminHelper.JobManagementServices(collectedJobDetails);
+                        if (newJobData != null)
+                        {
+                            if (collectedJobDetails.ActionType == GeneralAction.CREATE)
+                            {
+                                return Json(new { isError = false, msg = "Created Successfully" });
+                            }
+                            if (collectedJobDetails.ActionType == GeneralAction.EDIT)
+                            {
+                                return Json(new { isError = false, msg = "Updated Successfully" });
+                            }
+                            if (collectedJobDetails.ActionType == GeneralAction.DEACTIVATE)
+                            {
+                                return Json(new { isError = false, msg = "Deactivated Successfully" });
+                            }
+                            if (collectedJobDetails.ActionType == GeneralAction.ACTIVATE)
+                            {
+                                return Json(new { isError = false, msg = "Activated Successfully" });
+                            }
+                        }
+                        else
+                        {
+                            return Json(new { isError = true, msg = "Failed" });
+                        }
+                    }
+                }
+                return Json(new { isError = true, msg = "Failed" });
+            }
+            catch (Exception ex)
+            {
+
+                return Json(new { isError = true, msg = "An unexpected error occured " + ex.Message });
+            }
+        }
+        [HttpGet]
+        public JsonResult FindJob(int? jobId)
+        {
+            try
+            {
+                if (jobId != null)
+                {
+                    var job4Action = _userHelper.GetJobById(jobId);
+                    return Json(job4Action);
+                }
+                return Json(new { isError = true, msg = "Failed" });
+            }
+            catch (Exception ex)
+            {
+
+                return Json(new { isError = true, msg = "An unexpected error occured " + ex.Message });
+            }
+        }
+        [HttpGet]
+        public IActionResult Employment()
+        {
+            var employmentList = _adminHelper.GetListOfEmploymentData();
+            return View(employmentList);
+        }
+
     }
 }

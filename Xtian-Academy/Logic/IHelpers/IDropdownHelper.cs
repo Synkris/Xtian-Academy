@@ -13,5 +13,6 @@ namespace Logic.IHelpers
         List<TrainingCourse> DropdownOfCourses();
         List<DropDown> DropdownOfCoursesWhereIsTested(string userName);
         List<DropDown> JobTypesForSearch();
+        List<DropDown> JobTypes();
     }
 }

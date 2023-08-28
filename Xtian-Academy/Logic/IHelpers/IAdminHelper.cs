@@ -20,5 +20,8 @@ namespace Logic.IHelpers
         AnswerOptions PostServices4Options(AnswerOptions collectedData);
         List<ProjectTopic> GetListOfAllApprovedProjectTopic();
         ProjectTopic ProjectCompletionServices(int topicId);
+        List<Job> GetListOfAllJobs();
+        Job JobManagementServices(JobViewModels collectedData);
+        List<EmployementData> GetListOfEmploymentData();
     }
 }
