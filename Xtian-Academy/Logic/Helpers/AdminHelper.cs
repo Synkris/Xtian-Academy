@@ -5,6 +5,7 @@ using Core.Models;
 using Core.ViewModels;
 using Logic.IHelpers;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Logic.Helpers
 {
@@ -353,6 +354,39 @@ namespace Logic.Helpers
 
                 return newOption;
             }
+            return null;
+        }
+
+        public List<ProjectTopic> GetListOfAllApprovedProjectTopic()
+        {
+            var allApprovedProjectTopic = _context.ProjectTopics.Where(p => p.IsApproved).Include(c => c.Course).ToList();
+            if (allApprovedProjectTopic.Any())
+            {
+                return allApprovedProjectTopic;
+            }
+            return null;
+        }
+        public ProjectTopic ProjectCompletionServices(int topicId)
+        {
+            if (topicId > 0)
+            {
+                var myCompletedProject = _userHelper.GetProjectTopicById(topicId);
+
+                if (myCompletedProject != null)
+                {
+                    myCompletedProject.Status = ProjectStatus.Accepted;
+
+                    var result = _context.ProjectTopics.Update(myCompletedProject);
+                    _context.SaveChanges();
+
+                    if (result != null)
+                    {
+                        _emailHelper.SendMailToStudentsOnProjectCompletion(myCompletedProject.Student.Email);
+                        return myCompletedProject;
+                    }
+                }
+            }
+
             return null;
         }
 

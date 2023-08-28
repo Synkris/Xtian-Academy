@@ -272,5 +272,36 @@ namespace Logic.Helpers
 
         }
 
+        public bool ApprovedProjectTopicMailTemlate(ApplicationUser userDetail, ProjectTopic topicOwer)
+        {
+            string toEmail = userDetail.Email;
+            string subject = "PROJECT TOPIC APPROVAL";
+            string message = "Dear " + userDetail.FirstName + ", " + "<br>" + "<br>" + "<b>" + topicOwer.Title + "</b>" + " has been approved for your project. Make Sure you Update your project to GitHub." + "<br>" + "<br>" + "Good luck!!!" + "<br>" + "<br>";
+            _emailService.SendEmail(toEmail, subject, message);
+            return true;
+        }
+        public bool SendMailToStudentsOnProjectCompletion(string emailAddressTo)
+        {
+            try
+            {
+                if (emailAddressTo != null)
+                {
+                    string toEmail = emailAddressTo;
+                    string subject = "CONGRATULATION";
+                    string message = "Congratulations, your project has been accepted you can now apply for a job." + "<br/> " + "<br/> " +
+                    "Kind regards,<br/>" +
+                    "<b>Bivisoft Limited.</b>";
+                    _emailService.SendEmail(toEmail, subject, message);
+                    return true;
+                };
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
     }
 }

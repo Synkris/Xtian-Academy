@@ -18,5 +18,7 @@ namespace Logic.IHelpers
         TestQuestions TestQuestionsServices(TestQuestionsViewModel collectedData);
         List<string> GetOptListByQuestionIds(int id);
         AnswerOptions PostServices4Options(AnswerOptions collectedData);
+        List<ProjectTopic> GetListOfAllApprovedProjectTopic();
+        ProjectTopic ProjectCompletionServices(int topicId);
     }
 }

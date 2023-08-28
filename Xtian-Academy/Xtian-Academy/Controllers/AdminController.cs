@@ -543,5 +543,79 @@ namespace Xtian_Academy.Controllers
             }
         }
 
+        public IActionResult ViewProjectTopics()
+        {
+            var projectTopicList = _userHelper.AllSubmenttedProjectTopic();
+            return View(projectTopicList);
+        }
+
+        public JsonResult AppoveProjectTopic(int? id)
+        {
+            if (id != null)
+            {
+                var proj2Approve = _userHelper.GetProjectTopicById(id);
+                var alreadyApprovedChk = _userHelper.CheckIfATopicHasBeenApprovedForTheSelectedCourse(proj2Approve);
+                if (alreadyApprovedChk != null)
+                {
+                    return Json(new { isError = true, msg = "You have already approve " + alreadyApprovedChk.Title + "Topic for this student" });
+                }
+                else
+                {
+                    proj2Approve.IsApproved = true;
+
+                    var approved = _context.ProjectTopics.Update(proj2Approve);
+                    _context.SaveChanges();
+                    if (approved != null)
+                    {
+                        var user = _userHelper.FindByIdAsync(proj2Approve.UserId).Result;
+                        _emailHelper.ApprovedProjectTopicMailTemlate(user, proj2Approve);
+                        return Json(new { isError = false, msg = "Approved Successfully" });
+                    }
+                }
+            }
+            return Json(new { isError = true, msg = "Failed" });
+        }
+        [HttpGet]
+        public IActionResult AprovedTopics()
+        {
+            var myTopics = _adminHelper.GetListOfAllApprovedProjectTopic();
+            if (myTopics != null)
+            {
+                return View(myTopics);
+            }
+            return View();
+        }
+        [HttpGet]
+        public JsonResult GetProjectLinksById(int id)
+        {
+            try
+            {
+                if (id != 0)
+                {
+                    var links = _studentHelper.GetProjectLinksServices(id);
+                    return Json(links);
+                }
+                return Json(new { isError = true, msg = "Failed" });
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new { isError = true, msg = "An unexpected error occured " + ex.Message });
+            }
+        }
+        [HttpPost]
+        public JsonResult MarkProjectAsCompleted(int projectId)
+        {
+            if (projectId > 0)
+            {
+                var newTopic = _adminHelper.ProjectCompletionServices(projectId);
+                if (newTopic != null)
+                {
+                    return Json(new { isError = false, msg = "Marked Successfully." });
+                }
+            }
+            return Json(new { isError = true, msg = "Failed" });
+        }
+
     }
 }
