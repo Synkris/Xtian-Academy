@@ -6,6 +6,9 @@ using Core.ViewModels;
 using Logic.IHelpers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using System.Net.Http.Headers;
+using System.Text;
 
 namespace Logic.Helpers
 {
@@ -571,6 +574,167 @@ namespace Logic.Helpers
             }
             return history;
         }
+        public bool ManageGraduationFormServices(EmployementDataViewModel employementDataViewModel)
+        {
+            try
+            {
+                if (employementDataViewModel != null)
+                {
+                    var employementData = _context.EmployementData.Where(e => e.Id == employementDataViewModel.Id).Include(u => u.User).FirstOrDefault();
+                    if (employementData != null)
+                    {
+                        employementData.IsApproved = true;
+
+                        _context.EmployementData.Update(employementData);
+                        _context.SaveChanges();
+                    }
+                    var amt = Convert.ToInt32(employementData.MonthlyDeduction) * 100;
+                    var upload = new UploadModel()
+                    {
+                        name = "Monthly Retainer",
+                        interval = "monthly",
+                        amount = Convert.ToString(amt),
+                        invoice_limit = "24",
+                    };
+                    using (var client = new HttpClient())
+                    {
+                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _generalConfiguration.PayStakApiKey);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        var uploadData = JsonConvert.SerializeObject(upload);
+                        if (uploadData != null)
+                        {
+                            var content = new StringContent(uploadData, Encoding.Default, "application/json");
+                            client.BaseAddress = new Uri("https://api.paystack.co");
+                            var url = "/plan";
+                            var result = client.PostAsync(url, content).Result;
+                            if (result.IsSuccessStatusCode)
+                            {
+                                var response = result.Content.ReadAsStringAsync().Result;
+                                var data = JsonConvert.DeserializeObject<ReocurringPaymentViewModel>(response);
+                                if (data != null)
+                                {
+                                    var planCreated =  SaveCreatedPlan(data, employementData.UserId);
+                                    if(planCreated != null)
+                                    {
+                                        var subscribe = new subscription()
+                                        {
+                                            email = employementData.User.Email,
+                                            amount = Convert.ToString(planCreated.amount),
+                                            plan = data.data.plan_code,
+                                        };
+                                        using (var checkout = new HttpClient())
+                                        {
+                                            checkout.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _generalConfiguration.PayStakApiKey);
+                                            checkout.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                                            var subscription = JsonConvert.SerializeObject(subscribe);
+                                            if (subscription != null)
+                                            {
+                                                var subscriptionContent = new StringContent(subscription, Encoding.Default, "application/json");
+                                                checkout.BaseAddress = new Uri("https://api.paystack.co");
+                                                var subUrl = "/transaction/initialize";
+                                                var subResult = checkout.PostAsync(subUrl, subscriptionContent).Result;
+                                                if (subResult.IsSuccessStatusCode)
+                                                {
+                                                    var subResponse = subResult.Content.ReadAsStringAsync().Result;
+                                                    var subData = JsonConvert.DeserializeObject<ReocurringPaymentViewModel>(subResponse);
+                                                    if(subData != null)
+                                                    {
+                                                        var subscriptionUpdate = AddCustomerSUbscriptionLink(subData, planCreated.MainId);
+                                                        if (subscriptionUpdate)
+                                                        {
+                                                            _emailHelper.SendMailToNewEmployee(subData.data.reference);
+                                                            return true;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    
+                                }
+                            }
+                        }
+                    }
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+          
+        }
+
+        public bool AddCustomerSUbscriptionLink(ReocurringPaymentViewModel reocurringPaymentViewModel, int mainId)
+        {
+            if (mainId > 0 && reocurringPaymentViewModel != null)
+            {
+                var subscriptionData = _context.ReoccuringPayments.Where(r => r.MainId == mainId).FirstOrDefault();
+                if (subscriptionData != null)
+                {
+                    subscriptionData.dateUpdated = DateTime.Now;
+                    subscriptionData.authorization_url = reocurringPaymentViewModel.data.authorization_url;
+                    subscriptionData.access_code = reocurringPaymentViewModel.data.access_code;
+                    subscriptionData.reference = reocurringPaymentViewModel.data.reference;
+
+                    _context.ReoccuringPayments.Update(subscriptionData);
+                    _context.SaveChanges();
+
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public ReoccuringPayments SaveCreatedPlan(ReocurringPaymentViewModel reocurringPaymentViewModel, string userId)
+        {
+            if (reocurringPaymentViewModel != null)
+            {
+                var saveData = new ReoccuringPayments()
+                {
+                    UserId = userId,
+                    name = reocurringPaymentViewModel.data.name,
+                    interval = reocurringPaymentViewModel.data.interval,
+                    invoice_limit = reocurringPaymentViewModel.data.invoice_limit,
+                    amount = (reocurringPaymentViewModel.data.amount / 100),
+                    integration = reocurringPaymentViewModel.data.integration,
+                    domain = reocurringPaymentViewModel.data.domain,
+                    currency = reocurringPaymentViewModel.data.currency,
+                    plan_code = reocurringPaymentViewModel.data.plan_code,
+                    send_invoices = reocurringPaymentViewModel.data.send_invoices,
+                    send_sms = reocurringPaymentViewModel.data.send_sms,
+                    hosted_page = reocurringPaymentViewModel.data.hosted_page,
+                    migrate = reocurringPaymentViewModel.data.migrate,
+                    is_archived = reocurringPaymentViewModel.data.is_archived,
+                    id = reocurringPaymentViewModel.data.id,
+                    createdAt = reocurringPaymentViewModel.data.createdAt,
+                    updatedAt = reocurringPaymentViewModel.data.updatedAt,
+                    IsAuthorized = false,
+                    dateUpdated = DateTime.Now,
+                };
+                _context.ReoccuringPayments.Add(saveData);
+                _context.SaveChanges();
+                return saveData;
+            }
+            return null;
+        }
+
+        public class UploadModel
+        {
+            public string name { get; set; }
+            public string interval { get; set; }
+            public string invoice_limit { get; set; }
+            public string amount { get; set; }
+        }
+
+        public class subscription
+        {
+            public string email { get; set; }
+            public string plan { get; set; }
+            public string amount { get; set; }
+        }
+
 
     }
 }

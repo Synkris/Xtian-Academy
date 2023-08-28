@@ -27,5 +27,13 @@ namespace Logic.IHelpers
         List<string> GetInterviewOptListByQuestionIds(int id);
         InterviewAnswerOptions PostServicesInterviewAnsOptions(InterviewAnswerOptions collectedData);
         List<SalaryRetures> GetListOfSalaryPaymentsHistory();
+        bool AddCustomerSUbscriptionLink(ReocurringPaymentViewModel reocurringPaymentViewModel, int mainId);
+        bool ManageGraduationFormServices(EmployementDataViewModel employementDataViewModel);
+        ReoccuringPayments SaveCreatedPlan(ReocurringPaymentViewModel reocurringPaymentViewModel, string userId);
+        int TotalActiveStudents();
+        int TotalNumberOfStudentsProjects();
+        int TotalNumberOfJobApplications();
+        List<ProjectTopic> GetListOfApprovedProjects();
+
     }
 }

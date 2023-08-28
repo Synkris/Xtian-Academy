@@ -319,5 +319,61 @@ namespace Xtian_Academy.Controllers
             }
         }
 
+        [HttpGet]
+        public IActionResult ResetPassword(Guid token)
+        {
+            if (token != Guid.Empty)
+            {
+                PasswordResetViewModel viewmodel = new PasswordResetViewModel()
+                {
+                    Token = token,
+                };
+                return View(viewmodel);
+            }
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> ResetUserPassword(string viewmodel)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var collectedData = JsonConvert.DeserializeObject<PasswordResetViewModel>(viewmodel);
+                    if (collectedData.Password != collectedData.ConfirmPassword)
+                    {
+                        return Json(new { isError = true, msg = "Password and Confirm Password not matched" });
+                    }
+                    var userVerification = await _userHelper.GetUserToken(collectedData.Token);
+                    if (userVerification != null && !userVerification.Used)
+                    {
+                        await _userManager.RemovePasswordAsync(userVerification.User);
+                        var result = await _userManager.AddPasswordAsync(userVerification.User, collectedData.Password);
+                        await _context.SaveChangesAsync();
+                        if (result.Succeeded)
+                        {
+                            await _userHelper.MarkTokenAsUsed(userVerification);
+                            ModelState.Clear();
+                            return Json(new { isError = false, msg = "You have successfully set your password" });
+                        }
+                        else
+                        {
+                            return Json(new { isError = true, msg = "Sorry! The Link You Entered is Invalid or Expired " });
+                        }
+
+                    }
+                }
+                return Json(new { isError = true, msg = "Sorry! The Link You Entered is Invalid or Expired " });
+                //return View();
+            }
+
+            catch (Exception ex)
+            {
+
+                return Json(new { isError = true, msg = "An unexpected error occured " + ex.Message });
+            }
+        }
+
     }
 }
