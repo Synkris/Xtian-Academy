@@ -19,6 +19,8 @@ namespace Logic.IHelpers
         bool SendPaymentAprovalMsg(ApplicationUser userDetail, string course);
         bool SendPaymentDeclineMsg(ApplicationUser userDetail, string course);
         bool SendMailToAdminOnJobApplication(ApplicationUser userDetail, Job jobDetails);
+        bool ApprovedProjectTopicMailTemlate(ApplicationUser userDetail, ProjectTopic topicOwer);
+        bool SendMailToStudentsOnProjectCompletion(string emailAddressTo);
 
 
 
