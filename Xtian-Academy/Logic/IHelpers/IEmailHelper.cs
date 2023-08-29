@@ -21,6 +21,9 @@ namespace Logic.IHelpers
         bool SendMailToAdminOnJobApplication(ApplicationUser userDetail, Job jobDetails);
         bool ApprovedProjectTopicMailTemlate(ApplicationUser userDetail, ProjectTopic topicOwer);
         bool SendMailToStudentsOnProjectCompletion(string emailAddressTo);
+        bool SendMailToNewEmployee(string reference);
+        bool ChangePasswordMailTemlate(ApplicationUser userDetail, string linkToClick);
+
 
 
 

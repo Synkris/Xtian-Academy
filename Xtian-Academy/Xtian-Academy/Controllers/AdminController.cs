@@ -807,6 +807,52 @@ namespace Xtian_Academy.Controllers
             var histories = _adminHelper.GetListOfSalaryPaymentsHistory();
             return View(histories);
         }
+        public JsonResult ManageGraduationForms(EmployementDataViewModel employementDataViewModel)
+
+        {
+            try
+            {
+                if (employementDataViewModel != null)
+                {
+                    var employementData = _adminHelper.ManageGraduationFormServices(employementDataViewModel);
+                    if (employementData)
+                    {
+                        return Json(new { isError = false, msg = "Approved uccessfully" });
+                    }
+                }
+
+                return Json(new { isError = true, msg = "Failed" });
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        // VIDEO  GET ACTIONAdminPostActionsForTestQuestions
+        [HttpGet]
+        public JsonResult GetVideoById(string videoId)
+        {
+            try
+            {
+                if (videoId != null)
+                {
+                    var videoDetails = JsonConvert.DeserializeObject<Guid>(videoId);
+                    if (videoDetails != Guid.Empty)
+                    {
+                        var video4Action = _userHelper.GetVideosById(videoDetails);
+                        return Json(video4Action);
+                    }
+                }
+                return Json(new { isError = true, msg = "Failed" });
+            }
+            catch (Exception ex)
+            {
+
+                return Json(new { isError = true, msg = "An unexpected error occured " + ex.Message });
+            }
+        }
+
 
     }
 }
