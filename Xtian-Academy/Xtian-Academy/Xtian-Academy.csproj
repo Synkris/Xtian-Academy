@@ -35,6 +35,7 @@
 
   <ItemGroup>
     <None Include="Views\Student\StudentCourses.cshtml" />
+    <None Include="Views\SuperAdmin\ManageAdmin.cshtml" />
   </ItemGroup>
 
 </Project>
